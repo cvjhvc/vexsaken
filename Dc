@@ -10697,7 +10697,7 @@ CornerRadius=UDim.new(0,am.Window.ElementConfig.UICorner-1),
 an.Box and af("UIPadding",{
 PaddingLeft=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
 PaddingRight=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
-PaddingBottom=UDim.new(0,am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5),
+PaddingBottom=UDim.new(0,0),
 })or nil,
 af("UIListLayout",{
 FillDirection="Vertical",
@@ -15660,4 +15660,4 @@ end
 return h
 end
 
-return a
+return aa
