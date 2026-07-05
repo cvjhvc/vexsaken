@@ -10697,7 +10697,7 @@ CornerRadius=UDim.new(0,am.Window.ElementConfig.UICorner-1),
 an.Box and af("UIPadding",{
 PaddingLeft=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
 PaddingRight=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
-PaddingBottom=UDim.new(0,0),
+PaddingBottom=UDim.new(0,am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5),
 })or nil,
 af("UIListLayout",{
 FillDirection="Vertical",
@@ -10774,6 +10774,7 @@ at.Size.X.Offset,
 0,
 at.Outline.Top.AbsoluteSize.Y/am.UIScale
 +(at.Outline.Content.AbsoluteSize.Y/am.UIScale)
++10
 )
 ap.ImageLabel.Rotation=180
 else
@@ -10784,6 +10785,7 @@ at.Size.X.Offset,
 0,
 at.Outline.Top.AbsoluteSize.Y/am.UIScale
 +(at.Outline.Content.AbsoluteSize.Y/am.UIScale)
++10
 ),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
@@ -11872,7 +11874,7 @@ at=-30
 end
 
 ar.UIElements.ContainerFrame=al("ScrollingFrame",{
-Size=UDim2.new(1,0,1,ar.ShowTabTitle and-((Window.UIPadding*2.2)+14)or 0),
+Size=UDim2.new(1,0,1,ar.ShowTabTitle and-((Window.UIPadding*1.2)+8)or 0),
 BackgroundTransparency=1,
 ScrollBarThickness=0,
 ElasticBehavior="Never",
@@ -11916,7 +11918,7 @@ BackgroundTransparency=1,
 Name="ScrollSliderHolder",
 }),
 al("Frame",{
-Size=UDim2.new(1,0,0,((Window.UIPadding*2.2)+14)),
+Size=UDim2.new(1,0,0,((Window.UIPadding*1.2)+8)),
 BackgroundTransparency=1,
 Visible=ar.ShowTabTitle or false,
 Name="TabTitle",
@@ -11927,7 +11929,7 @@ Text=ar.Title,
 ThemeTag={
 TextColor3="Text",
 },
-TextSize=Window.NewElements and 20 or 24,
+TextSize=Window.NewElements and 18 or 22,
 TextTransparency=0.1,
 Size=UDim2.new(0,0,1,0),
 FontFace=Font.new(ak.Font,Enum.FontWeight.SemiBold),
@@ -11939,10 +11941,10 @@ BackgroundTransparency=1,
 AutomaticSize="X",
 }),
 al("UIPadding",{
-PaddingTop=UDim.new(0,14),
-PaddingLeft=UDim.new(0,26),
-PaddingRight=UDim.new(0,26),
-PaddingBottom=UDim.new(0,14),
+PaddingTop=UDim.new(0,8),
+PaddingLeft=UDim.new(0,20),
+PaddingRight=UDim.new(0,20),
+PaddingBottom=UDim.new(0,8),
 }),
 al("UIListLayout",{
 SortOrder="LayoutOrder",
@@ -11958,7 +11960,7 @@ BackgroundTransparency=0.9,
 ThemeTag={
 BackgroundColor3="Text",
 },
-Position=UDim2.new(0,0,0,((Window.UIPadding*2.2)+14)),
+Position=UDim2.new(0,0,0,((Window.UIPadding*1.2)+8)),
 Visible=ar.ShowTabTitle or false,
 }),
 })
@@ -15657,7 +15659,5 @@ end
 
 return h
 end
-
-
 
 return aa
