@@ -1568,7 +1568,7 @@ if F==nil then
 return true
 end
 local G=F.__type
-return G=="Divider"or G=="Space"or G=="Section"
+return G=="Divider"or G=="Space"or G=="Section"or G=="MultiSection"
 end
 
 if isDelimiter(z[A])then
@@ -11491,6 +11491,7 @@ Group=a.load'W',
 HStack=a.load'X',
 VStack=a.load'Y',
 Viewport=a.load'Z',
+MultiSection=a.load'af',
 
 },
 Load=function(aa,af,ai,ak,al,am,an,ao,ap)
@@ -11929,7 +11930,7 @@ Text=ar.Title,
 ThemeTag={
 TextColor3="Text",
 },
-TextSize=Window.NewElements and 18 or 22,
+TextSize=Window.NewElements and 20 or 24,
 TextTransparency=0.1,
 Size=UDim2.new(0,0,1,0),
 FontFace=Font.new(ak.Font,Enum.FontWeight.SemiBold),
@@ -15659,5 +15660,1132 @@ end
 
 return h
 end
+
+function a.af()
+
+
+local aa=a.load'd'
+local ad=aa.New
+local ae=aa.Tween
+
+local af=(cloneref or clonereference or function(af)return af end)
+local ag=af(game:GetService"UserInputService")
+
+local ai={}
+
+local function IsPressInput(ak)
+return ak.UserInputType==Enum.UserInputType.MouseButton1
+or ak.UserInputType==Enum.UserInputType.Touch
+end
+
+local function ResolveTransparency(ak,al)
+local am=aa.GetThemeProperty(ak,aa.Theme)
+if typeof(am)~="number"then
+return al
+end
+return am
+end
+
+function ai.New(ak,al)
+local am={
+__type="MultiSection",
+Title=al.Title or"Section",
+Desc=al.Desc,
+Icon=al.Icon,
+TextXAlignment=al.TextXAlignment or"Left",
+TextSize=al.TextSize or 19,
+DescTextSize=al.DescTextSize or 16,
+Box=al.Box or false,
+BoxBorder=al.BoxBorder or false,
+FontWeight=al.FontWeight or Enum.FontWeight.SemiBold,
+DescFontWeight=al.DescFontWeight or Enum.FontWeight.Medium,
+TextTransparency=al.TextTransparency or 0.05,
+DescTextTransparency=al.DescTextTransparency or 0.4,
+HoverFeedback=al.Hover~=false,
+Opened=al.Opened or false,
+UIElements={},
+
+HeaderSize=al.HeaderSize or 42,
+IconSize=al.IconSize or 20,
+HeaderGap=al.HeaderGap or 10,
+HeaderPaddingX=al.HeaderPaddingX
+or(al.Window.ElementConfig.UIPadding+(al.Window.NewElements and 4 or 2)),
+HeaderPaddingY=al.HeaderPaddingY
+or math.max(math.floor((al.Window.ElementConfig.UIPadding+(al.Window.NewElements and 4 or 0))*0.65),6),
+
+TabGap=al.TabGap or 6,
+TabPaddingX=al.TabPaddingX or 12,
+TabPaddingY=al.TabPaddingY or 8,
+TabTextSize=al.TabTextSize or 15,
+TabDescTextSize=al.TabDescTextSize or 13,
+
+Tabs={},
+Elements={},
+
+SelectedTab=nil,
+SelectedTabIndex=nil,
+
+Expandable=false,
+}
+
+local an
+local ao=false
+local ap=false
+local aq=false
+local ar=false
+local as=false
+
+local at=al.Tab
+and al.Tab.UIElements
+and al.Tab.UIElements.ContainerFrame
+
+local au="__windui_multisection_scroll_lock_count"
+local av="__windui_multisection_scroll_lock_restore"
+
+local function GetUIScale()
+local aw=tonumber((al.WindUI and al.WindUI.UIScale)or al.UIScale)or 1
+if aw<=0 then
+return 1
+end
+return aw
+end
+
+local function ToLayoutOffset(aw)
+return aw/GetUIScale()
+end
+
+local aw=ad("Frame",{
+Size=UDim2.new(0,am.IconSize+10,0,am.IconSize+10),
+BackgroundTransparency=1,
+Visible=false,
+})
+
+local function createTitle(ax,ay)
+return ad("TextLabel",{
+BackgroundTransparency=1,
+TextXAlignment=am.TextXAlignment,
+AutomaticSize="Y",
+TextSize=ay and am.DescTextSize or am.TextSize,
+TextTransparency=ay and am.DescTextTransparency or am.TextTransparency,
+ThemeTag={
+TextColor3=ay and"SectionDesc"or"SectionTitle",
+},
+FontFace=Font.new(aa.Font,ay and am.DescFontWeight or am.FontWeight),
+Text=ax,
+Size=UDim2.new(1,0,0,0),
+TextWrapped=true,
+})
+end
+
+local ax=ad("Frame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+},{
+ad("UIListLayout",{
+FillDirection="Vertical",
+HorizontalAlignment=am.TextXAlignment,
+VerticalAlignment="Center",
+Padding=UDim.new(0,4),
+}),
+})
+
+local ay=createTitle(am.Title,false)
+ay.Parent=ax
+
+local az
+if am.Desc and am.Desc~=""then
+az=createTitle(am.Desc,true)
+az.Parent=ax
+end
+
+local aA=ad("Frame",{
+Size=UDim2.new(0,am.IconSize,0,am.IconSize),
+BackgroundTransparency=1,
+Visible=false,
+},{
+ad("ImageLabel",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+Image=aa.Icon"chevron-down"[1],
+ImageRectSize=aa.Icon"chevron-down"[2].ImageRectSize,
+ImageRectOffset=aa.Icon"chevron-down"[2].ImageRectPosition,
+ThemeTag={
+ImageTransparency="SectionExpandIconTransparency",
+ImageColor3="SectionExpandIcon",
+},
+}),
+})
+
+local aB=ad("Frame",{
+Size=UDim2.new(0,0,0,am.IconSize),
+AutomaticSize="X",
+BackgroundTransparency=1,
+},{
+ad("UIListLayout",{
+FillDirection="Horizontal",
+VerticalAlignment="Center",
+HorizontalAlignment="Right",
+Padding=UDim.new(0,6),
+}),
+aA,
+})
+
+local b=ad("Frame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+},{
+ad("UIListLayout",{
+Padding=UDim.new(0,am.HeaderGap),
+FillDirection="Horizontal",
+VerticalAlignment="Center",
+HorizontalAlignment="Left",
+}),
+aw,
+ax,
+aB,
+})
+
+local d=aa.NewRoundFrame(al.Window.ElementConfig.UICorner,"Squircle",{
+Size=UDim2.new(1,0,0,0),
+BackgroundTransparency=1,
+Parent=al.Parent,
+ClipsDescendants=true,
+AutomaticSize="Y",
+ThemeTag=am.Box and{
+ImageTransparency="SectionBoxBackgroundTransparency",
+ImageColor3="SectionBoxBackground",
+}or nil,
+ImageTransparency=not am.Box and 1 or nil,
+},{
+aa.NewRoundFrame(
+al.Window.ElementConfig.UICorner,
+"Glass-1",
+{
+BackgroundTransparency=1,
+Size=UDim2.new(1,0,1,0),
+ThemeTag={
+ImageTransparency="SectionBoxBorderTransparency",
+ImageColor3="SectionBoxBorder",
+},
+Visible=am.Box and am.BoxBorder,
+Name="Outline",
+}
+),
+ad("TextButton",{
+Name="Top",
+Size=UDim2.new(1,0,0,am.HeaderSize),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+Active=false,
+AutoButtonColor=false,
+Text="",
+ClipsDescendants=true,
+},{
+ad("UIPadding",{
+PaddingTop=UDim.new(0,am.HeaderPaddingY),
+PaddingBottom=UDim.new(0,am.HeaderPaddingY),
+PaddingLeft=UDim.new(0,am.HeaderPaddingX),
+PaddingRight=UDim.new(0,am.HeaderPaddingX),
+}),
+b,
+}),
+ad("Frame",{
+Name="HeaderDivider",
+BackgroundTransparency=1,
+Size=UDim2.new(1,-(am.Box and al.Window.ElementConfig.UIPadding*2 or 0),0,1),
+Position=UDim2.new(0.5,0,0,am.HeaderSize),
+AnchorPoint=Vector2.new(0.5,0),
+Visible=false,
+ThemeTag={
+BackgroundColor3="SectionContentDivider",
+BackgroundTransparency="SectionContentDividerTransparency",
+},
+}),
+ad("Frame",{
+Name="Content",
+BackgroundTransparency=1,
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+Visible=false,
+Position=UDim2.new(0,0,0,am.HeaderSize),
+},{
+ad("UIPadding",{
+PaddingTop=UDim.new(0,am.Box and 8 or 4),
+PaddingLeft=UDim.new(0,am.Box and al.Window.ElementConfig.UIPadding or 0),
+PaddingRight=UDim.new(0,am.Box and al.Window.ElementConfig.UIPadding or 0),
+PaddingBottom=UDim.new(0,am.Box and al.Window.ElementConfig.UIPadding or 2),
+}),
+ad("UIListLayout",{
+FillDirection="Vertical",
+Padding=UDim.new(0,am.TabGap),
+VerticalAlignment="Top",
+}),
+ad("Frame",{
+Name="Tabs",
+Size=UDim2.new(1,0,0,0),
+BackgroundTransparency=1,
+},{
+ad("ScrollingFrame",{
+Name="Scroll",
+Size=UDim2.new(1,0,0,0),
+BackgroundTransparency=1,
+ScrollBarThickness=0,
+CanvasSize=UDim2.new(0,0,0,0),
+ScrollingDirection="X",
+AutomaticCanvasSize="None",
+ScrollingEnabled=true,
+ElasticBehavior="Never",
+ClipsDescendants=true,
+},{
+ad("UIListLayout",{
+FillDirection="Horizontal",
+Padding=UDim.new(0,am.TabGap),
+VerticalAlignment="Center",
+HorizontalAlignment="Left",
+}),
+}),
+}),
+ad("Frame",{
+Name="TabsContent",
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+}),
+}),
+})
+
+am.ElementFrame=d
+am.UIElements={
+Main=d,
+Top=d.Top,
+Content=d.Content,
+Tabs=d.Content.Tabs,
+TabsScroll=d.Content.Tabs.Scroll,
+TabsContent=d.Content.TabsContent,
+Icon=aw,
+Title=ay,
+Desc=az,
+Chevron=aA.ImageLabel,
+}
+
+local f=d.Content.Tabs.Scroll.UIListLayout
+
+local function UpdateTitleSize()
+local g=aw.Visible and(ToLayoutOffset(aw.AbsoluteSize.X)+am.HeaderGap)or 0
+local h=aB.AbsoluteSize.X>0 and(ToLayoutOffset(aB.AbsoluteSize.X)+am.HeaderGap)
+or 0
+ax.Size=UDim2.new(1,-(g+h),0,0)
+end
+
+local function SetWindowScrollLock(g)
+if not at then
+as=false
+return
+end
+
+if g and not as then
+as=true
+
+local h=at:GetAttribute(au)or 0
+if h<=0 then
+at:SetAttribute(av,at.ScrollingEnabled)
+end
+
+at:SetAttribute(au,h+1)
+at.ScrollingEnabled=false
+return
+end
+
+if(not g)and as then
+as=false
+
+local h=at:GetAttribute(au)or 0
+h=math.max(h-1,0)
+
+if h>0 then
+at:SetAttribute(au,h)
+return
+end
+
+local j=at:GetAttribute(av)
+at:SetAttribute(au,nil)
+at:SetAttribute(av,nil)
+at.ScrollingEnabled=typeof(j)=="boolean"and j or true
+end
+end
+
+local function UpdateWindowScrollLock()
+local g=aq and ar and am.Opened
+SetWindowScrollLock(g)
+end
+
+local function UpdateTabsAlignment()
+local g=am.UIElements.Tabs
+local h=am.UIElements.TabsScroll
+
+local j=math.max(0,math.floor(ToLayoutOffset(h.AbsoluteSize.X)+0.5))
+local l=math.max(0,math.floor(ToLayoutOffset(f.AbsoluteContentSize.X)+0.5))
+local m=math.max(0,math.floor(ToLayoutOffset(f.AbsoluteContentSize.Y)+0.5))
+local p=math.max(am.TabTextSize+(am.TabPaddingY*2),20)
+local r=(#am.Tabs>0)and math.max(math.ceil(m),p)or 0
+
+g.Size=UDim2.new(1,0,0,r)
+h.Size=UDim2.new(1,0,0,r)
+h.CanvasSize=UDim2.new(0,math.max(l,j),0,r)
+
+if j<=0 or l<=0 then
+ar=false
+f.HorizontalAlignment=Enum.HorizontalAlignment.Left
+h.ScrollingEnabled=false
+h.CanvasPosition=Vector2.new(0,0)
+UpdateWindowScrollLock()
+return
+end
+
+ar=l>j
+
+if l<=j then
+f.HorizontalAlignment=Enum.HorizontalAlignment.Center
+h.ScrollingEnabled=false
+h.CanvasPosition=Vector2.new(0,0)
+else
+f.HorizontalAlignment=Enum.HorizontalAlignment.Left
+h.ScrollingEnabled=true
+
+local u=math.max(h.AbsoluteCanvasSize.X-h.AbsoluteSize.X,0)
+local v=math.clamp(h.CanvasPosition.X,0,u)
+
+if v~=h.CanvasPosition.X then
+h.CanvasPosition=Vector2.new(v,0)
+end
+end
+
+UpdateWindowScrollLock()
+end
+
+local function UpdateContentLayout()
+local g=d.Top.AbsoluteSize.Y/GetUIScale()
+d.Content.Position=UDim2.new(0,0,0,g)
+d.HeaderDivider.Position=UDim2.new(0.5,0,0,g)
+end
+
+local function SetHoverState(g)
+if not am.Box then
+return
+end
+
+local h=ResolveTransparency("SectionBoxBackgroundTransparency",0.95)
+local j=math.max(h-0.04,0)
+local l=math.max(h-0.1,0)
+
+local m=h
+if ap then
+m=l
+elseif ao then
+m=j
+end
+
+if g then
+d.ImageTransparency=m
+else
+ae(d,0.12,{
+ImageTransparency=m,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+end
+
+local function SetChevronState(g,h)
+local j=g and 180 or 0
+local l=g and 0.1 or 0.25
+
+if h then
+aA.ImageLabel.Rotation=j
+aA.ImageLabel.ImageTransparency=l
+else
+ae(aA.ImageLabel,0.2,{
+Rotation=j,
+ImageTransparency=l,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+end
+
+local function SyncHeight(g)
+if not am.Expandable then
+return
+end
+
+UpdateTabsAlignment()
+UpdateContentLayout()
+
+local h=d.Top.AbsoluteSize.Y
+local j=am.Opened and d.Content.AbsoluteSize.Y or 0
+local l=(h+j)/GetUIScale()
+
+local m=UDim2.new(d.Size.X.Scale,d.Size.X.Offset,0,l)
+
+if g then
+d.Size=m
+else
+ae(d,am.Opened and 0.33 or 0.24,{
+Size=m,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+d.HeaderDivider.Visible=am.Opened and am.Box and d.Content.AbsoluteSize.Y>0
+end
+
+local function EnsureExpandable()
+if am.Expandable then
+return
+end
+
+am.Expandable=true
+aA.Visible=true
+d.Top.Active=true
+d.Content.Visible=true
+d.AutomaticSize="None"
+
+UpdateTitleSize()
+UpdateContentLayout()
+
+if am.Opened then
+SetChevronState(true,true)
+else
+SetChevronState(false,true)
+end
+
+SyncHeight(true)
+end
+
+local function ResolveTab(g)
+if typeof(g)=="table"then
+return g
+end
+
+if typeof(g)=="number"then
+return am.Tabs[g]
+end
+
+if typeof(g)=="string"then
+for h,j in next,am.Tabs do
+if j.Title==g then
+return j
+end
+end
+end
+
+return nil
+end
+
+local function SetTabState(g,h,j)
+if not g or not g.UIElements or not g.UIElements.Button then
+return
+end
+
+local l
+local m
+local p
+local r
+local u
+
+if h=="Selected"then
+l=ResolveTransparency("TabBackgroundActiveTransparency",0.93)
+m=ResolveTransparency("TabBorderTransparencyActive",0.75)
+p=0.05
+r=0.35
+u=0
+elseif h=="Hover"then
+l=ResolveTransparency("TabBackgroundHoverTransparency",0.97)
+m=ResolveTransparency("TabBorderTransparency",1)
+p=0.25
+r=0.5
+u=0.2
+else
+l=1
+m=1
+p=0.4
+r=0.6
+u=0.35
+end
+
+local v=g.UIElements.Button
+local x=g.UIElements.Outline
+local z=g.UIElements.Title
+local A=g.UIElements.Desc
+local B=g.UIElements.Icon and g.UIElements.Icon.ImageLabel
+
+if j then
+v.ImageTransparency=l
+if x then
+x.ImageTransparency=m
+end
+if z then
+z.TextTransparency=p
+end
+if A then
+A.TextTransparency=r
+end
+if B then
+B.ImageTransparency=u
+end
+else
+ae(v,0.1,{
+ImageTransparency=l,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+if x then
+ae(x,0.1,{
+ImageTransparency=m,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+if z then
+ae(z,0.1,{
+TextTransparency=p,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+if A then
+ae(A,0.1,{
+TextTransparency=r,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+if B then
+ae(B,0.1,{
+ImageTransparency=u,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+end
+end
+
+function am.SetIcon(g,h)
+am.Icon=h or nil
+
+if an then
+an:Destroy()
+an=nil
+end
+
+aw.Visible=false
+
+if h then
+an=aa.Image(
+h,
+h..":"..am.Title,
+0,
+al.Window.Folder,
+am.__type,
+true,
+true,
+"SectionIcon"
+)
+an.Size=UDim2.new(0,am.IconSize,0,am.IconSize)
+an.Parent=aw
+an.Position=UDim2.new(0.5,0,0.5,0)
+an.AnchorPoint=Vector2.new(0.5,0.5)
+aw.Visible=true
+end
+
+UpdateTitleSize()
+end
+
+function am.SetTitle(g,h)
+am.Title=h
+ay.Text=h
+end
+
+function am.SetDesc(g,h)
+am.Desc=h
+
+if h and h~=""then
+if not az then
+az=createTitle(h,true)
+az.Parent=ax
+am.UIElements.Desc=az
+end
+az.Text=h
+az.Visible=true
+elseif az then
+az.Visible=false
+az.Text=""
+end
+
+if am.Expandable then
+SyncHeight(true)
+end
+end
+
+function am.Lock(g)
+return am
+end
+
+function am.Unlock(g)
+return am
+end
+
+function am.SelectTab(g,h,j)
+local l=ResolveTab(h)
+if not l then
+return nil
+end
+
+if am.SelectedTab==l then
+return l
+end
+
+if am.SelectedTab and am.SelectedTab.UIElements.Content then
+am.SelectedTab.UIElements.Content.Parent=nil
+SetTabState(am.SelectedTab,"Default",j)
+end
+
+am.SelectedTab=l
+am.SelectedTabIndex=l.Index
+
+l.UIElements.Content.Parent=am.UIElements.TabsContent
+SetTabState(l,"Selected",j)
+
+SyncHeight(j)
+return l
+end
+
+function am.GetSelectedTab(g)
+return am.SelectedTab
+end
+
+function am.GetTabs(g)
+return am.Tabs
+end
+
+function am.Tab(g,h)
+h=h or{}
+
+EnsureExpandable()
+
+local j={
+__type="MultiSectionTab",
+Title=h.Title or("Tab "..tostring(#am.Tabs+1)),
+Desc=h.Desc,
+Icon=h.Icon,
+IconThemed=h.IconThemed,
+Parent=am,
+Elements={},
+UIElements={},
+Index=#am.Tabs+1,
+Gap=al.Tab
+and al.Tab.Gap
+or(al.Window.NewElements and 4 or 6),
+}
+
+local l
+if j.Icon then
+l=aa.Image(
+j.Icon,
+j.Icon..":"..am.Title..":"..j.Title,
+0,
+al.Window.Folder,
+"Tab",
+true,
+j.IconThemed,
+"TabIcon"
+)
+l.Size=UDim2.new(0,16,0,16)
+end
+
+local m=j.Desc and j.Desc~=""
+local p=m and"Left"or"Center"
+local r=l and 24 or 0
+
+local u=m and ad("TextLabel",{
+Name="Desc",
+BackgroundTransparency=1,
+AutomaticSize="XY",
+Text=j.Desc or"",
+Visible=true,
+TextXAlignment="Left",
+TextYAlignment="Top",
+ThemeTag={
+TextColor3="Text",
+},
+FontFace=Font.new(aa.Font,Enum.FontWeight.Regular),
+TextSize=am.TabDescTextSize,
+TextTransparency=0.6,
+},{
+ad("UIPadding",{
+PaddingLeft=UDim.new(0,r),
+}),
+})or nil
+
+local v=aa.NewRoundFrame(math.max(al.Window.ElementConfig.UICorner-2,6),"Squircle",{
+Size=UDim2.new(0,0,0,0),
+AutomaticSize="XY",
+BackgroundTransparency=1,
+AutoButtonColor=false,
+ThemeTag={
+ImageColor3="TabBackground",
+},
+ImageTransparency=1,
+Parent=am.UIElements.TabsScroll,
+},{
+aa.NewRoundFrame(math.max(al.Window.ElementConfig.UICorner-2,6),"Glass-1.4",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+ThemeTag={
+ImageColor3="TabBorder",
+},
+ImageTransparency=1,
+Name="Outline",
+}),
+ad("Frame",{
+Name="Frame",
+Size=UDim2.new(0,0,0,0),
+AutomaticSize="XY",
+BackgroundTransparency=1,
+},{
+ad("UIPadding",{
+PaddingTop=UDim.new(0,am.TabPaddingY),
+PaddingBottom=UDim.new(0,am.TabPaddingY),
+PaddingLeft=UDim.new(0,am.TabPaddingX),
+PaddingRight=UDim.new(0,am.TabPaddingX),
+}),
+ad("UIListLayout",{
+FillDirection="Vertical",
+Padding=UDim.new(0,m and 2 or 0),
+HorizontalAlignment=p,
+VerticalAlignment="Center",
+}),
+ad("Frame",{
+Name="HeaderRow",
+BackgroundTransparency=1,
+Size=UDim2.new(0,0,0,0),
+AutomaticSize="XY",
+},{
+ad("UIListLayout",{
+FillDirection="Horizontal",
+Padding=UDim.new(0,8),
+HorizontalAlignment=p,
+VerticalAlignment="Center",
+}),
+l,
+ad("TextLabel",{
+Name="Title",
+BackgroundTransparency=1,
+AutomaticSize="XY",
+Text=j.Title,
+TextXAlignment=m and"Left"or"Center",
+TextYAlignment="Center",
+ThemeTag={
+TextColor3="TabTitle",
+},
+FontFace=Font.new(aa.Font,Enum.FontWeight.Medium),
+TextSize=am.TabTextSize,
+TextTransparency=0.4,
+}),
+}),
+u,
+}),
+},true)
+
+local x=ad("Frame",{
+Name="TabContent_"..tostring(j.Index),
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+},{
+ad("UIListLayout",{
+FillDirection="Vertical",
+Padding=UDim.new(0,j.Gap),
+VerticalAlignment="Top",
+}),
+})
+
+j.UIElements={
+Button=v,
+Outline=v.Outline,
+Title=v.Frame.HeaderRow.Title,
+Desc=u,
+Icon=l,
+Content=x,
+ContainerFrame=(al.Tab and al.Tab.UIElements and al.Tab.UIElements.ContainerFrame)
+or{ScrollingEnabled=true},
+}
+
+local z=al.ElementsModule
+
+z.Load(
+j,
+x,
+z.Elements,
+al.Window,
+al.WindUI,
+function(A)
+if am.SelectedTab==j and am.Expandable then
+SyncHeight(true)
+end
+end,
+z,
+al.UIScale,
+j
+)
+
+aa.AddSignal(x.UIListLayout:GetPropertyChangedSignal"AbsoluteContentSize",function()
+if am.SelectedTab==j and am.Expandable then
+SyncHeight(true)
+end
+end)
+
+aa.AddSignal(v.MouseEnter,function()
+if am.SelectedTab~=j then
+SetTabState(j,"Hover",false)
+end
+end)
+
+aa.AddSignal(v.InputEnded,function()
+if am.SelectedTab~=j then
+SetTabState(j,"Default",false)
+end
+end)
+
+aa.AddSignal(v.MouseButton1Click,function()
+am:SelectTab(j)
+end)
+
+function j.Select(A,B)
+return am:SelectTab(j,B)
+end
+
+function j.Destroy(A)
+for B=#j.Elements,1,-1 do
+local C=j.Elements[B]
+if C and C.Destroy then
+C:Destroy()
+end
+end
+
+if j.UIElements.Content then
+j.UIElements.Content:Destroy()
+end
+
+if j.UIElements.Button then
+j.UIElements.Button:Destroy()
+end
+
+local B
+for C,F in next,am.Tabs do
+if F==j then
+B=C
+break
+end
+end
+
+if B then
+table.remove(am.Tabs,B)
+end
+
+for C,F in next,am.Tabs do
+F.Index=C
+end
+
+UpdateTabsAlignment()
+
+if am.SelectedTab==j then
+am.SelectedTab=nil
+am.SelectedTabIndex=nil
+
+if am.Tabs[1]then
+am:SelectTab(am.Tabs[1],true)
+else
+SyncHeight(true)
+end
+else
+SyncHeight(true)
+end
+end
+
+table.insert(am.Tabs,j)
+UpdateTabsAlignment()
+
+if h.Selected or h.Opened or not am.SelectedTab then
+am:SelectTab(j,true)
+else
+SetTabState(j,"Default",true)
+end
+
+SyncHeight(true)
+return j
+end
+
+function am.Destroy(g)
+aq=false
+ar=false
+SetWindowScrollLock(false)
+
+for h=#am.Tabs,1,-1 do
+local j=am.Tabs[h]
+if j and j.Destroy then
+j:Destroy()
+end
+end
+
+d:Destroy()
+end
+
+function am.Open(g,h)
+if am.Expandable then
+am.Opened=true
+d.Content.Visible=true
+SetChevronState(true,h)
+SyncHeight(h)
+UpdateWindowScrollLock()
+end
+end
+
+function am.Close(g,h)
+if am.Expandable then
+am.Opened=false
+SetChevronState(false,h)
+SyncHeight(h)
+UpdateWindowScrollLock()
+end
+end
+
+if am.Icon then
+am:SetIcon(am.Icon)
+end
+
+aa.AddSignal(d.Top:GetPropertyChangedSignal"AbsoluteSize",function()
+UpdateTitleSize()
+UpdateContentLayout()
+
+if am.Expandable then
+SyncHeight(true)
+end
+end)
+
+aa.AddSignal(aB:GetPropertyChangedSignal"AbsoluteSize",function()
+UpdateTitleSize()
+end)
+
+aa.AddSignal(d.Content.UIListLayout:GetPropertyChangedSignal"AbsoluteContentSize",function()
+if am.Expandable then
+SyncHeight(true)
+end
+end)
+
+aa.AddSignal(am.UIElements.TabsScroll:GetPropertyChangedSignal"AbsoluteSize",function()
+UpdateTabsAlignment()
+end)
+
+aa.AddSignal(f:GetPropertyChangedSignal"AbsoluteContentSize",function()
+UpdateTabsAlignment()
+end)
+
+aa.AddSignal(am.UIElements.TabsScroll.MouseEnter,function()
+aq=true
+UpdateWindowScrollLock()
+end)
+
+aa.AddSignal(am.UIElements.TabsScroll.MouseLeave,function()
+aq=false
+UpdateWindowScrollLock()
+end)
+
+aa.AddSignal(ag.InputChanged,function(g)
+if not aq then
+return
+end
+
+if g.UserInputType~=Enum.UserInputType.MouseWheel then
+return
+end
+
+local h=am.UIElements.TabsScroll
+local j=math.max(h.AbsoluteCanvasSize.X-h.AbsoluteSize.X,0)
+if j<=0 then
+return
+end
+
+local l=-g.Position.Z*34
+local m=math.clamp(h.CanvasPosition.X+l,0,j)
+h.CanvasPosition=Vector2.new(m,0)
+end)
+
+aa.AddSignal(d.Top.MouseEnter,function()
+if not am.HoverFeedback then
+return
+end
+
+ao=true
+SetHoverState(false)
+end)
+
+aa.AddSignal(d.Top.MouseLeave,function()
+ao=false
+ap=false
+SetHoverState(false)
+end)
+
+aa.AddSignal(d.Top.InputBegan,function(g)
+if not am.HoverFeedback or not IsPressInput(g)then
+return
+end
+
+ap=true
+SetHoverState(false)
+end)
+
+aa.AddSignal(d.Top.InputEnded,function(g)
+if not am.HoverFeedback or not IsPressInput(g)then
+return
+end
+
+ap=false
+SetHoverState(false)
+end)
+
+aa.AddSignal(d.Top.Activated,function()
+if am.Expandable then
+if am.Opened then
+am:Close()
+else
+am:Open()
+end
+end
+end)
+
+task.defer(function()
+UpdateTitleSize()
+UpdateContentLayout()
+UpdateTabsAlignment()
+
+if not am.Expandable then
+d.Content.Visible=false
+d.Top.Active=false
+d.Top.Size=UDim2.new(1,0,0,am.HeaderSize)
+d.Top.AutomaticSize="Y"
+d.AutomaticSize="Y"
+end
+
+SetHoverState(true)
+SetChevronState(am.Opened,true)
+
+if am.Expandable then
+if am.Opened then
+am:Open(true)
+else
+am:Close(true)
+end
+end
+
+UpdateWindowScrollLock()
+end)
+
+return am.__type,am
+end
+
+return ai end
+
 
 return aa
