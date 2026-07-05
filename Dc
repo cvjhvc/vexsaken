@@ -1575,9 +1575,21 @@ if isDelimiter(z[A])then
 return nil,3
 end
 
-local function calculate(F,G)
+local function isLastReal(D)
+for E=D+1,C do
+if not isDelimiter(z[E])then
+return false
+end
+end
+return true
+end
+
+local function calculate(F,G,forceLast)
 if G==1 then
 return"Squircle"
+end
+if forceLast then
+return B and"SquircleH-BL-BR"or"Squircle-BL-BR"
 end
 if F==1 then
 return B and"SquircleH-TL-TR"or"Squircle-TL-TR"
@@ -1596,7 +1608,7 @@ local J=z[H]
 if isDelimiter(J)then
 if A>=F and A<=H-1 then
 local L=A-F+1
-return calculate(L,G)
+return calculate(L,G,isLastReal(A))
 end
 F=H+1
 G=0
@@ -1607,7 +1619,7 @@ end
 
 if A>=F and A<=C then
 local H=A-F+1
-return calculate(H,G)
+return calculate(H,G,isLastReal(A))
 end
 
 return nil,4
