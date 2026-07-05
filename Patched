@@ -10697,7 +10697,7 @@ CornerRadius=UDim.new(0,am.Window.ElementConfig.UICorner-1),
 an.Box and af("UIPadding",{
 PaddingLeft=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
 PaddingRight=UDim.new(0,am.Window.BoxGaps~=false and(am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5)or 0),
-PaddingBottom=UDim.new(0,am.Window.NewElements and am.Window.ElementConfig.UIPadding/2 or am.Window.ElementConfig.UIPadding/1.5),
+PaddingBottom=UDim.new(0,0),
 })or nil,
 af("UIListLayout",{
 FillDirection="Vertical",
@@ -11872,7 +11872,7 @@ at=-30
 end
 
 ar.UIElements.ContainerFrame=al("ScrollingFrame",{
-Size=UDim2.new(1,0,1,ar.ShowTabTitle and-((Window.UIPadding*1.2)+8)or 0),
+Size=UDim2.new(1,0,1,ar.ShowTabTitle and-((Window.UIPadding*2.2)+14)or 0),
 BackgroundTransparency=1,
 ScrollBarThickness=0,
 ElasticBehavior="Never",
@@ -11916,7 +11916,7 @@ BackgroundTransparency=1,
 Name="ScrollSliderHolder",
 }),
 al("Frame",{
-Size=UDim2.new(1,0,0,((Window.UIPadding*1.2)+8)),
+Size=UDim2.new(1,0,0,((Window.UIPadding*2.2)+14)),
 BackgroundTransparency=1,
 Visible=ar.ShowTabTitle or false,
 Name="TabTitle",
@@ -11939,10 +11939,10 @@ BackgroundTransparency=1,
 AutomaticSize="X",
 }),
 al("UIPadding",{
-PaddingTop=UDim.new(0,8),
+PaddingTop=UDim.new(0,14),
 PaddingLeft=UDim.new(0,26),
 PaddingRight=UDim.new(0,26),
-PaddingBottom=UDim.new(0,8),
+PaddingBottom=UDim.new(0,14),
 }),
 al("UIListLayout",{
 SortOrder="LayoutOrder",
@@ -11958,7 +11958,7 @@ BackgroundTransparency=0.9,
 ThemeTag={
 BackgroundColor3="Text",
 },
-Position=UDim2.new(0,0,0,((Window.UIPadding*1.2)+8)),
+Position=UDim2.new(0,0,0,((Window.UIPadding*2.2)+14)),
 Visible=ar.ShowTabTitle or false,
 }),
 })
