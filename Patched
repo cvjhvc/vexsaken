@@ -10774,7 +10774,6 @@ at.Size.X.Offset,
 0,
 at.Outline.Top.AbsoluteSize.Y/am.UIScale
 +(at.Outline.Content.AbsoluteSize.Y/am.UIScale)
-+10
 )
 ap.ImageLabel.Rotation=180
 else
@@ -10785,7 +10784,6 @@ at.Size.X.Offset,
 0,
 at.Outline.Top.AbsoluteSize.Y/am.UIScale
 +(at.Outline.Content.AbsoluteSize.Y/am.UIScale)
-+10
 ),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
@@ -11929,7 +11927,7 @@ Text=ar.Title,
 ThemeTag={
 TextColor3="Text",
 },
-TextSize=Window.NewElements and 18 or 22,
+TextSize=Window.NewElements and 20 or 24,
 TextTransparency=0.1,
 Size=UDim2.new(0,0,1,0),
 FontFace=Font.new(ak.Font,Enum.FontWeight.SemiBold),
@@ -11942,8 +11940,8 @@ AutomaticSize="X",
 }),
 al("UIPadding",{
 PaddingTop=UDim.new(0,8),
-PaddingLeft=UDim.new(0,20),
-PaddingRight=UDim.new(0,20),
+PaddingLeft=UDim.new(0,26),
+PaddingRight=UDim.new(0,26),
 PaddingBottom=UDim.new(0,8),
 }),
 al("UIListLayout",{
@@ -15659,5 +15657,7 @@ end
 
 return h
 end
+
+
 
 return aa
