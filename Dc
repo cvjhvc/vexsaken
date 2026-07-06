@@ -7100,7 +7100,7 @@ ai.Icon,
 ai.IconSize,
 ai.ToggleFrame.UIElements.Main,
 ai.Callback,
-ah.Window.NewElements,
+false,
 ah
 )
 elseif ai.Type=="Checkbox"then
@@ -7116,8 +7116,8 @@ else
 error("Unknown Toggle Type: "..tostring(ai.Type))
 end
 
-al.AnchorPoint=Vector2.new(1,ah.Window.NewElements and 0 or 0.5)
-al.Position=UDim2.new(1,0,ah.Window.NewElements and 0 or 0.5,0)
+al.AnchorPoint=Vector2.new(1,0.5)
+al.Position=UDim2.new(1,0,0.5,0)
 
 function ai.Set(an,ao,ap,aq)
 if aj then
@@ -7127,11 +7127,11 @@ ai.Value=ao
 end
 end
 
-ai:Set(ak,false,ah.Window.NewElements)
+ai:Set(ak,false,false)
 
 local an=ah.WindUI.GenerateGUID()
 
-if ah.Window.NewElements and am.Animate then
+if false and am.Animate then
 if ai.Type=="Toggle"then
 aa.AddSignal(al.ToggleFrame.Hitbox.InputBegan,function(ao)
 if
@@ -7158,11 +7158,11 @@ end
 else
 if ai.Type=="Toggle"then
 aa.AddSignal(al.ToggleFrame.Hitbox.MouseButton1Click,function()
-ai:Set(not ai.Value,nil,ah.Window.NewElements)
+ai:Set(not ai.Value,nil,false)
 end)
 elseif ai.Type=="Checkbox"then
 aa.AddSignal(al.MouseButton1Click,function()
-ai:Set(not ai.Value,nil,ah.Window.NewElements)
+ai:Set(not ai.Value,nil,false)
 end)
 end
 end
