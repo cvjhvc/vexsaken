@@ -11850,7 +11850,7 @@ au.ImageLabel.ImageTransparency=not ar.Locked and 0 or 0.7
 at=-18-(Window.UIPadding/2)
 ar.UIElements.Main.Frame.TextLabel.Size=UDim2.new(1,at,0,0)
 elseif ar.IconColor then
-ak.NewRoundFrame(
+local iconBg=ak.NewRoundFrame(
 ar.IconShape~="Circle"and(ar.UICorner+5-(2+(Window.UIPadding/4)))or 9999,
 "Squircle",
 {
@@ -11872,23 +11872,12 @@ ImageTransparency=0,
 Name="Outline",
 },
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 ),
 }
 )
+ar.UIElements.IconBackground=iconBg
+ar.UIElements.Icon=au
 au.AnchorPoint=Vector2.new(0.5,0.5)
 au.Position=UDim2.new(0.5,0,0.5,0)
 au.ImageLabel.ImageTransparency=0
@@ -12162,6 +12151,16 @@ end
 
 function ar.Select(aB)
 return ao:SelectTab(ar.Index)
+end
+
+function ar.SetIconColor(aB,aC)
+ar.IconColor=aC
+if ar.UIElements.IconBackground then
+ar.UIElements.IconBackground.ImageColor3=aC
+end
+if ar.UIElements.Icon then
+ar.UIElements.Icon.ImageLabel.ImageColor3=ar.IconShape and ak.GetTextColorForHSB(aC,0.68)or aC
+end
 end
 
 task.spawn(function()
