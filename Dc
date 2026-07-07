@@ -7207,6 +7207,8 @@ Width=ak.Width or 130,
 TextBoxWidth=ak.Window.NewElements and 40 or 30,
 ThumbSize=13,
 IconSize=26,
+ThumbIcon=ak.ThumbIcon or nil,
+ThumbIconColor=ak.ThumbIconColor or nil,
 }
 if al.Icons=={}then
 al.Icons={
@@ -7328,11 +7330,32 @@ ae.NewRoundFrame(999,"SquircleGlass",{
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
 Name="Highlight",
-ImageTransparency=0.5,
+ImageTransparency=al.ThumbIcon and 1 or 0.5,
 }),
 }),
 }),
 })
+
+if al.ThumbIcon then
+local thumbIconImg=ae.Image(
+al.ThumbIcon,
+al.ThumbIcon,
+0,
+ak.Window.Folder,
+"SliderThumbIcon",
+not al.ThumbIconColor,
+true,
+"SliderThumbIcon"
+)
+thumbIconImg.Size=UDim2.new(0,al.ThumbSize,0,al.ThumbSize)
+thumbIconImg.AnchorPoint=Vector2.new(0.5,0.5)
+thumbIconImg.Position=UDim2.new(0.5,0,0.5,0)
+thumbIconImg.Parent=al.UIElements.SliderIcon.Frame.Thumb
+if al.ThumbIconColor then
+thumbIconImg.ImageLabel.ImageColor3=al.ThumbIconColor
+end
+al.UIElements.ThumbIcon=thumbIconImg
+end
 
 al.UIElements.SliderContainer=af("Frame",{
 Size=UDim2.new(al.Title==nil and 1 or 0,al.Title==nil and 0 or al.Width,0,0),
