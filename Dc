@@ -516,8 +516,8 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=1,
-TabBorderTransparencyActive=0.75,
+TabBorderTransparency=0.85,
+TabBorderTransparencyActive=0.5,
 TabBorder="White",
 
 ElementBackground="Text",
@@ -7100,7 +7100,7 @@ ai.Icon,
 ai.IconSize,
 ai.ToggleFrame.UIElements.Main,
 ai.Callback,
-false,
+ah.Window.NewElements,
 ah
 )
 elseif ai.Type=="Checkbox"then
@@ -7116,8 +7116,8 @@ else
 error("Unknown Toggle Type: "..tostring(ai.Type))
 end
 
-al.AnchorPoint=Vector2.new(1,0.5)
-al.Position=UDim2.new(1,0,0.5,0)
+al.AnchorPoint=Vector2.new(1,ah.Window.NewElements and 0 or 0.5)
+al.Position=UDim2.new(1,0,ah.Window.NewElements and 0 or 0.5,0)
 
 function ai.Set(an,ao,ap,aq)
 if aj then
@@ -7127,11 +7127,11 @@ ai.Value=ao
 end
 end
 
-ai:Set(ak,false,false)
+ai:Set(ak,false,ah.Window.NewElements)
 
 local an=ah.WindUI.GenerateGUID()
 
-if false and am.Animate then
+if ah.Window.NewElements and am.Animate then
 if ai.Type=="Toggle"then
 aa.AddSignal(al.ToggleFrame.Hitbox.InputBegan,function(ao)
 if
@@ -7158,11 +7158,11 @@ end
 else
 if ai.Type=="Toggle"then
 aa.AddSignal(al.ToggleFrame.Hitbox.MouseButton1Click,function()
-ai:Set(not ai.Value,nil,false)
+ai:Set(not ai.Value,nil,ah.Window.NewElements)
 end)
 elseif ai.Type=="Checkbox"then
 aa.AddSignal(al.MouseButton1Click,function()
-ai:Set(not ai.Value,nil,false)
+ai:Set(not ai.Value,nil,ah.Window.NewElements)
 end)
 end
 end
@@ -13046,6 +13046,7 @@ Icon=av.Icon,
 IconSize=av.IconSize or 22,
 IconThemed=av.IconThemed,
 IconRadius=av.IconRadius or 0,
+IconCallback=av.IconCallback,
 Folder=av.Folder,
 Resizable=av.Resizable~=false,
 Background=av.Background,
@@ -14125,11 +14126,20 @@ aw.OpenButtonMain=a.load'A'.New(aw)
 
 task.spawn(function()
 if aw.Icon then
-local A=ao("Frame",{
-Size=UDim2.new(0,22,0,22),
+local A=an.NewRoundFrame(math.max(aw.UICorner-(aw.UIPadding/2),0),"Squircle",{
+Size=UDim2.new(0,26,0,26),
 BackgroundTransparency=1,
+ImageTransparency=1,
+Active=true,
+ThemeTag={
+ImageColor3="Text",
+},
 Parent=aw.UIElements.Main.Main.Topbar.Left,
-})
+},{
+ao("UIScale",{
+Scale=1,
+}),
+},true)
 
 v=an.Image(
 aw.Icon,
@@ -14148,21 +14158,39 @@ v.AnchorPoint=Vector2.new(0.5,0.5)
 
 aw.OpenButtonMain:SetIcon(aw.Icon)
 
+an.AddSignal(A.MouseEnter,function()
+ap(A,0.15,{ImageTransparency=0.93}):Play()
+end)
 
+an.AddSignal(A.MouseLeave,function()
+ap(A,0.1,{ImageTransparency=1}):Play()
+end)
 
+an.AddSignal(A.MouseButton1Down,function()
+ap(A.UIScale,0.2,{Scale=0.9},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end)
 
+an.AddSignal(A.InputEnded,function()
+ap(A.UIScale,0.2,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.InOut):Play()
+end)
 
+an.AddSignal(A.MouseButton1Click,function()
+if aw.IconCallback then
+aw.IconCallback()
+end
+end)
 
-
-
-
-
+aw.UIElements.WindowIconButton=A
 
 else
 aw.OpenButtonMain:SetIcon(aw.Icon)
 
 end
 end)
+
+function aw.OnIconClick(C,F)
+C.IconCallback=F
+end
 
 function aw.SetToggleKey(A,B)
 aw.ToggleKey=B
