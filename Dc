@@ -559,8 +559,8 @@ ProgressBarTrack="Text",
 ProgressBarTrackTransparency=0.9,
 ProgressBarText="Text",
 
-Tooltip=Color3.fromHex"4C4C4C",
-TooltipText="White",
+Tooltip="Background",
+TooltipText="Text",
 TooltipSecondary="Primary",
 TooltipSecondaryText="White",
 
@@ -4545,7 +4545,7 @@ end
 
 al.Visible=true
 
-local at=math.clamp(as/ar,0.05,1)
+local at=math.clamp(as/ar,0.05,0.5)
 al.Size=UDim2.new(1,0,at,0)
 
 local au=ar-as
@@ -10540,7 +10540,7 @@ Icon=am.Icon,
 IconThemed=am.IconThemed,
 TextXAlignment=am.TextXAlignment or"Left",
 TextSize=am.TextSize or 19,
-DescTextSize=am.DescTextSize or 16,
+DescTextSize=am.DescTextSize or 14,
 Box=am.Box or false,
 BoxBorder=am.BoxBorder or false,
 FontWeight=am.FontWeight or Enum.FontWeight.SemiBold,
@@ -12005,7 +12005,7 @@ an(
 ar.UIElements.ContainerFrame,
 ar.UIElements.ContainerFrameCanvas.ScrollSliderHolder,
 Window,
-4,
+3,
 WindUI
 )
 end
@@ -13309,7 +13309,7 @@ as(
 aw.UIElements.SideBar,
 aw.UIElements.SideBarContainer.Content,
 aw,
-3,
+2,
 av.WindUI
 )
 end
