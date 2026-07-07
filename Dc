@@ -516,7 +516,7 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=0.92,
+TabBorderTransparency=1,
 TabBorderTransparencyActive=0.75,
 TabBorder="White",
 
