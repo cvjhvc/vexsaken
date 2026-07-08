@@ -14875,7 +14875,7 @@ N.UIElements.UIListLayout=ao("UIListLayout",{
 Padding=UDim.new(0,12),
 FillDirection="Vertical",
 HorizontalAlignment="Left",
-VerticalFlex="SpaceBetween",
+VerticalAlignment="Top",
 Parent=N.UIElements.Main,
 })
 
@@ -14928,7 +14928,7 @@ end
 
 local DialogDropdownElement=nil
 if M.Dropdown then
-local DropdownModule=a.load'K'
+local DropdownModule=a.load'O'
 local _,ddEl=DropdownModule.New(nil,{
 Title=M.Dropdown.Title or"Select",
 Desc=M.Dropdown.Desc,
