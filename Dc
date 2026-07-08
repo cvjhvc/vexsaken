@@ -11708,7 +11708,7 @@ ShowTabTitle=ap.ShowTabTitle,
 TabTitleAlign=ap.TabTitleAlign or"Left",
 CustomEmptyPage=(ap.CustomEmptyPage and next(ap.CustomEmptyPage)~=nil)and ap.CustomEmptyPage
 or{Icon="lucide:frown",IconSize=48,Title="This tab is Empty",Desc=nil},
-Border=ap.Border,
+Outline=ap.Outline,
 Selected=false,
 Index=nil,
 Parent=ap.Parent,
@@ -11823,6 +11823,11 @@ PaddingBottom=UDim.new(0,ar.TabPaddingY),
 }),
 }),
 },true)
+
+if ar.Outline then
+ar.UIElements.Main.Outline.ImageTransparency=0.85
+ar.UIElements.Main.Outline.ImageColor3=Color3.fromRGB(160,160,160)
+end
 
 local at=0
 local au
@@ -12247,10 +12252,9 @@ if not as.Locked then
 ak.SetThemeTag(as.UIElements.Main,{
 ImageTransparency="TabBorderTransparency",
 },0.15)
-if as.Border then
-ak.SetThemeTag(as.UIElements.Main.Outline,{
-ImageTransparency="TabBorderTransparency",
-},0.15)
+if as.Outline then
+as.UIElements.Main.Outline.ImageColor3=Color3.fromRGB(160,160,160)
+game:GetService("TweenService"):Create(as.UIElements.Main.Outline,TweenInfo.new(0.15,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{ImageTransparency=0.85}):Play()
 end
 ak.SetThemeTag(as.UIElements.Main.Frame.TextLabel,{
 TextTransparency="TabTextTransparency",
@@ -12267,10 +12271,9 @@ ak.SetThemeTag(ao.Tabs[aq].UIElements.Main,{
 ImageColor3="TabBackgroundActive",
 ImageTransparency="TabBackgroundActiveTransparency",
 },0.15)
-if ao.Tabs[aq].Border then
-ak.SetThemeTag(ao.Tabs[aq].UIElements.Main.Outline,{
-ImageTransparency="TabBorderTransparencyActive",
-},0.15)
+if ao.Tabs[aq].Outline then
+ao.Tabs[aq].UIElements.Main.Outline.ImageColor3=Color3.fromRGB(255,255,255)
+game:GetService("TweenService"):Create(ao.Tabs[aq].UIElements.Main.Outline,TweenInfo.new(0.15,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{ImageTransparency=0.75}):Play()
 end
 ak.SetThemeTag(ao.Tabs[aq].UIElements.Main.Frame.TextLabel,{
 TextTransparency="TabTextTransparencyActive",
@@ -14929,8 +14932,8 @@ end
 local Dr
 if M.Dropdown then
 local DropdownWrapper=ao("Frame",{
-Size=UDim2.new(1,0,0,36),
-AutomaticSize="None",
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
 ClipsDescendants=false,
 BackgroundTransparency=1,
 LayoutOrder=1,
@@ -14965,8 +14968,8 @@ Dr=DropdownElement
 
 if DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements
 and DropdownElement.DropdownFrame.UIElements.Main then
-DropdownElement.DropdownFrame.UIElements.Main.Size=UDim2.new(1,0,1,0)
-DropdownElement.DropdownFrame.UIElements.Main.AutomaticSize="None"
+DropdownElement.DropdownFrame.UIElements.Main.Size=UDim2.new(1,0,0,0)
+DropdownElement.DropdownFrame.UIElements.Main.AutomaticSize="Y"
 end
 end
 
