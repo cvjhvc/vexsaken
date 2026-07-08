@@ -14928,6 +14928,15 @@ end
 
 local Dr
 if M.Dropdown then
+local DropdownWrapper=ao("Frame",{
+Size=UDim2.new(1,0,0,36),
+AutomaticSize="None",
+ClipsDescendants=false,
+BackgroundTransparency=1,
+LayoutOrder=1,
+Parent=O,
+})
+
 local DropdownModule=a.load'O'
 local FakeTab={
 __type="Dialog",
@@ -14943,7 +14952,7 @@ AllowNone=M.Dropdown.AllowNone,
 SearchBarEnabled=M.Dropdown.SearchBarEnabled,
 Callback=M.Dropdown.Callback,
 Flag=M.Dropdown.Flag,
-Parent=O,
+Parent=DropdownWrapper,
 Tab=FakeTab,
 Index=1,
 Window=aw,
@@ -14953,6 +14962,12 @@ UIScale=av.WindUI.UIScale,
 local _,DropdownElement=DropdownModule:New(DropdownConfig)
 FakeTab.Elements[1]=DropdownElement
 Dr=DropdownElement
+
+if DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements
+and DropdownElement.DropdownFrame.UIElements.Main then
+DropdownElement.DropdownFrame.UIElements.Main.Size=UDim2.new(1,0,1,0)
+DropdownElement.DropdownFrame.UIElements.Main.AutomaticSize="None"
+end
 end
 
 local R=ao("UIListLayout",{
