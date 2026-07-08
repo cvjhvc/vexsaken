@@ -14938,6 +14938,11 @@ ClipsDescendants=false,
 BackgroundTransparency=1,
 LayoutOrder=1,
 Parent=O,
+},{
+ao("UIPadding",{
+PaddingLeft=UDim.new(0,M.TextPadding/2),
+PaddingRight=UDim.new(0,M.TextPadding/2),
+}),
 })
 
 local DropdownModule=a.load'O'
@@ -14968,8 +14973,31 @@ Dr=DropdownElement
 
 if DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements
 and DropdownElement.DropdownFrame.UIElements.Main then
-DropdownElement.DropdownFrame.UIElements.Main.Size=UDim2.new(1,0,0,0)
-DropdownElement.DropdownFrame.UIElements.Main.AutomaticSize="Y"
+local DDMain=DropdownElement.DropdownFrame.UIElements.Main
+
+DDMain.Size=UDim2.new(1,0,0,0)
+DDMain.AutomaticSize="Y"
+
+-- Trim the oversized row padding inherited from the generic element
+-- template (meant for full settings rows, not a compact dialog).
+local DDPadding=DDMain:FindFirstChildOfClass("UIPadding")
+if DDPadding then
+DDPadding.PaddingTop=UDim.new(0,6)
+DDPadding.PaddingBottom=UDim.new(0,6)
+DDPadding.PaddingLeft=UDim.new(0,10)
+DDPadding.PaddingRight=UDim.new(0,10)
+end
+
+-- The base component's outline only ever appears on hover, so add a
+-- persistent, clearly visible border around the dropdown row here.
+ao("UIStroke",{
+Thickness=1.5,
+Transparency=0.25,
+ThemeTag={
+Color="Outline",
+},
+Parent=DDMain,
+})
 end
 end
 
