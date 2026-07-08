@@ -14817,6 +14817,7 @@ Title=L.Title or"Dialog",
 Width=L.Width or 320,
 Content=L.Content,
 Buttons=L.Buttons or{},
+Dropdown=L.Dropdown,
 
 TextPadding=14,
 }
@@ -14925,6 +14926,27 @@ PaddingBottom=UDim.new(0,M.TextPadding/2),
 })
 end
 
+local DialogDropdownElement=nil
+if M.Dropdown then
+local DropdownModule=a.load'K'
+local _,ddEl=DropdownModule.New(nil,{
+Title=M.Dropdown.Title or"Select",
+Desc=M.Dropdown.Desc,
+Values=M.Dropdown.Values or{},
+Value=M.Dropdown.Value,
+Multi=M.Dropdown.Multi or false,
+AllowNone=M.Dropdown.AllowNone,
+SearchBarEnabled=M.Dropdown.SearchBarEnabled or false,
+MenuWidth=M.Dropdown.MenuWidth,
+Parent=O,
+Tab=nil,
+Index=1,
+Window=aw,
+Callback=M.Dropdown.Callback,
+})
+DialogDropdownElement=ddEl
+end
+
 local R=ao("UIListLayout",{
 Padding=UDim.new(0,6),
 FillDirection="Horizontal",
@@ -14951,8 +14973,18 @@ R,
 local T={}
 
 for U,V in next,M.Buttons do
+local OriginalCallback=V.Callback
+local WrappedCallback=function(...)
+if OriginalCallback then
+if DialogDropdownElement then
+OriginalCallback(DialogDropdownElement.Value,...)
+else
+OriginalCallback(...)
+end
+end
+end
 local W=
-ar(V.Title,V.Icon,V.Callback,V.Variant,S,N,true)
+ar(V.Title,V.Icon,WrappedCallback,V.Variant,S,N,true)
 table.insert(T,W)
 W.Size=UDim2.new(1,0,1,0)
 end
