@@ -516,8 +516,8 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=0.55,
-TabBorderTransparencyActive=0,
+TabBorderTransparency=1,
+TabBorderTransparencyActive=0.75,
 TabBorder="White",
 
 ElementBackground="Text",
@@ -14971,27 +14971,39 @@ local _,DropdownElement=DropdownModule:New(DropdownConfig)
 FakeTab.Elements[1]=DropdownElement
 Dr=DropdownElement
 
--- Patch UpdatePosition so the floating list appears directly below the
--- dropdown row instead of being shifted up by the topbar-height offset
--- that the generic formula bakes in (the -54 constant).
-if DropdownElement.UIElements then
-local _DDRow=DropdownElement.UIElements.Dropdown
-or(DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements.Main)
-local _DDMenu=DropdownElement.UIElements.MenuCanvas
-if _DDRow and _DDMenu then
-local function DialogUpdatePosition()
-local _gap=6
-_DDMenu.Position=UDim2.new(
-0,
-_DDRow.AbsolutePosition.X+_DDRow.AbsoluteSize.X,
-0,
-_DDRow.AbsolutePosition.Y+_DDRow.AbsoluteSize.Y+_gap
+-- Wire this up to the Window's config/Flag system exactly like a normal
+-- Tab-created element does, so a Flag on a Dialog dropdown persists and
+-- restores its Value just like the actual dropdowns in this file.
+if DropdownConfig.Flag and typeof(DropdownConfig.Flag)=="string"then
+if aw.CurrentConfig then
+aw.CurrentConfig:Register(DropdownConfig.Flag,DropdownElement)
+
+if aw.PendingConfigData and aw.PendingConfigData[DropdownConfig.Flag]then
+local PendingData=aw.PendingConfigData[DropdownConfig.Flag]
+
+local ConfigManager=aw.ConfigManager
+if ConfigManager.Parser[PendingData.__type]then
+task.defer(function()
+local Ok,Err=pcall(function()
+ConfigManager.Parser[PendingData.__type].Load(DropdownElement,PendingData)
+end)
+
+if Ok then
+aw.PendingConfigData[DropdownConfig.Flag]=nil
+else
+warn(
+"[ WindUI ] Failed to apply pending config for '"
+..DropdownConfig.Flag
+.."': "
+..tostring(Err)
 )
 end
--- Connect to AbsolutePosition changes so it stays live when dialog moves
-_DDRow:GetPropertyChangedSignal("AbsolutePosition"):Connect(DialogUpdatePosition)
--- Also fire once after a frame so the initial open is correct
-task.defer(DialogUpdatePosition)
+end)
+end
+end
+else
+aw.PendingFlags=aw.PendingFlags or{}
+aw.PendingFlags[DropdownConfig.Flag]=DropdownElement
 end
 end
 
