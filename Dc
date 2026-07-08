@@ -14817,6 +14817,7 @@ Title=L.Title or"Dialog",
 Width=L.Width or 320,
 Content=L.Content,
 Buttons=L.Buttons or{},
+Dropdown=L.Dropdown,
 
 TextPadding=14,
 }
@@ -14925,6 +14926,35 @@ PaddingBottom=UDim.new(0,M.TextPadding/2),
 })
 end
 
+local Dr
+if M.Dropdown then
+local DropdownModule=a.load'O'
+local FakeTab={
+__type="Dialog",
+Elements={},
+}
+local DropdownConfig={
+Title=M.Dropdown.Title,
+Desc=M.Dropdown.Desc,
+Values=M.Dropdown.Values or{},
+Value=M.Dropdown.Value,
+Multi=M.Dropdown.Multi,
+AllowNone=M.Dropdown.AllowNone,
+SearchBarEnabled=M.Dropdown.SearchBarEnabled,
+Callback=M.Dropdown.Callback,
+Flag=M.Dropdown.Flag,
+Parent=O,
+Tab=FakeTab,
+Index=1,
+Window=aw,
+WindUI=av.WindUI,
+UIScale=av.WindUI.UIScale,
+}
+local _,DropdownElement=DropdownModule:New(DropdownConfig)
+FakeTab.Elements[1]=DropdownElement
+Dr=DropdownElement
+end
+
 local R=ao("UIListLayout",{
 Padding=UDim.new(0,6),
 FillDirection="Horizontal",
@@ -15009,130 +15039,16 @@ end
 
 
 
+N.Dropdown=Dr
+
+N.Dropdown=Dr
+
 N:Open()
 
 return N
 end
 
--- ChoiceDialog: uses Dialog internally, injects a checkbox list before the buttons
-function aw.ChoiceDialog(J,L)
-    local selected = {}
-    local checkRefs = {}
-
-    -- We'll inject the dropdown after Dialog creates its frame
-    -- Store options so the button callback can read them
-    local Options  = L.Options  or {}
-    local Callback = L.Callback or function() end
-    local ButtonLabel = L.Button or "Confirm"
-
-    -- Build the confirm button that reads selected and closes
-    local dialogRef
-    local confirmCallback = function()
-        local result = {}
-        for k in pairs(selected) do table.insert(result, k) end
-        Callback(result)
-    end
-
-    -- Create the base dialog
-    dialogRef = aw.Dialog(J, {
-        Title   = L.Title,
-        Content = L.Content,
-        Icon    = L.Icon,
-        Width   = L.Width,
-        Buttons = {
-            {
-                Title    = ButtonLabel,
-                Callback = confirmCallback,
-            },
-        },
-    })
-
-    -- Now inject the checkbox rows into the dialog's main frame, before the button row
-    -- dialogRef.UIElements.Main is the vertical list frame
-    local mainFrame = dialogRef.UIElements.Main
-
-    local dropFrame = Instance.new("Frame")
-    dropFrame.Size = UDim2.new(1, -28, 0, 0)
-    dropFrame.AutomaticSize = Enum.AutomaticSize.Y
-    dropFrame.BackgroundTransparency = 1
-    dropFrame.LayoutOrder = 3  -- after content (2), before buttons (4)
-    dropFrame.Position = UDim2.new(0, 14, 0, 0)
-    dropFrame.Parent = mainFrame
-
-    local list = Instance.new("UIListLayout")
-    list.FillDirection = Enum.FillDirection.Vertical
-    list.Padding = UDim.new(0, 4)
-    list.Parent = dropFrame
-
-    for _, option in ipairs(Options) do
-        local isOn = false
-
-        local row = Instance.new("TextButton")
-        row.Size = UDim2.new(1, 0, 0, 34)
-        row.BackgroundTransparency = 0.88
-        row.Text = ""
-        row.AutoButtonColor = false
-        row.Parent = dropFrame
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 6)
-        corner.Parent = row
-
-        local pad = Instance.new("UIPadding")
-        pad.PaddingLeft = UDim.new(0, 10)
-        pad.PaddingRight = UDim.new(0, 10)
-        pad.Parent = row
-
-        local checkBox = Instance.new("Frame")
-        checkBox.Size = UDim2.new(0, 16, 0, 16)
-        checkBox.AnchorPoint = Vector2.new(0, 0.5)
-        checkBox.Position = UDim2.new(0, 0, 0.5, 0)
-        checkBox.BackgroundTransparency = 0.6
-        checkBox.Parent = row
-        Instance.new("UICorner", checkBox).CornerRadius = UDim.new(0, 4)
-
-        local tick = Instance.new("TextLabel")
-        tick.Size = UDim2.new(1, 0, 1, 0)
-        tick.Text = "✓"
-        tick.TextSize = 11
-        tick.TextTransparency = 1
-        tick.BackgroundTransparency = 1
-        tick.Font = Enum.Font.GothamBold
-        tick.Parent = checkBox
-
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, -26, 1, 0)
-        label.Position = UDim2.new(0, 24, 0, 0)
-        label.Text = option
-        label.TextSize = 15
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.TextTransparency = 0.15
-        label.BackgroundTransparency = 1
-        label.Font = Enum.Font.Gotham
-        label.Parent = row
-
-        row.MouseButton1Click:Connect(function()
-            isOn = not isOn
-            if isOn then
-                selected[option] = true
-                tick.TextTransparency = 0
-                checkBox.BackgroundTransparency = 0.1
-                row.BackgroundTransparency = 0.7
-            else
-                selected[option] = nil
-                tick.TextTransparency = 1
-                checkBox.BackgroundTransparency = 0.6
-                row.BackgroundTransparency = 0.88
-            end
-        end)
-
-        table.insert(checkRefs, { row = row, tick = tick, box = checkBox })
-    end
-
-    return dialogRef
-end
-
-
+local J=false
 
 aw:CreateTopbarButton("Close","x",function()
 if not J then
