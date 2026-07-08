@@ -516,8 +516,8 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=1,
-TabBorderTransparencyActive=0.75,
+TabBorderTransparency=0.55,
+TabBorderTransparencyActive=0,
 TabBorder="White",
 
 ElementBackground="Text",
@@ -14932,12 +14932,17 @@ end
 local Dr
 if M.Dropdown then
 local DropdownWrapper=ao("Frame",{
-Size=UDim2.new(1,0,0,36),
-AutomaticSize="None",
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
 ClipsDescendants=false,
 BackgroundTransparency=1,
 LayoutOrder=1,
 Parent=O,
+},{
+ao("UIPadding",{
+PaddingLeft=UDim.new(0,M.TextPadding/2),
+PaddingRight=UDim.new(0,M.TextPadding/2),
+}),
 })
 
 local DropdownModule=a.load'O'
@@ -14966,10 +14971,57 @@ local _,DropdownElement=DropdownModule:New(DropdownConfig)
 FakeTab.Elements[1]=DropdownElement
 Dr=DropdownElement
 
+-- Patch UpdatePosition so the floating list appears directly below the
+-- dropdown row instead of being shifted up by the topbar-height offset
+-- that the generic formula bakes in (the -54 constant).
+if DropdownElement.UIElements then
+local _DDRow=DropdownElement.UIElements.Dropdown
+or(DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements.Main)
+local _DDMenu=DropdownElement.UIElements.MenuCanvas
+if _DDRow and _DDMenu then
+local function DialogUpdatePosition()
+local _gap=6
+_DDMenu.Position=UDim2.new(
+0,
+_DDRow.AbsolutePosition.X+_DDRow.AbsoluteSize.X,
+0,
+_DDRow.AbsolutePosition.Y+_DDRow.AbsoluteSize.Y+_gap
+)
+end
+-- Connect to AbsolutePosition changes so it stays live when dialog moves
+_DDRow:GetPropertyChangedSignal("AbsolutePosition"):Connect(DialogUpdatePosition)
+-- Also fire once after a frame so the initial open is correct
+task.defer(DialogUpdatePosition)
+end
+end
+
 if DropdownElement.DropdownFrame and DropdownElement.DropdownFrame.UIElements
 and DropdownElement.DropdownFrame.UIElements.Main then
-DropdownElement.DropdownFrame.UIElements.Main.Size=UDim2.new(1,0,1,0)
-DropdownElement.DropdownFrame.UIElements.Main.AutomaticSize="None"
+local DDMain=DropdownElement.DropdownFrame.UIElements.Main
+
+DDMain.Size=UDim2.new(1,0,0,0)
+DDMain.AutomaticSize="Y"
+
+-- Trim the oversized row padding inherited from the generic element
+-- template (meant for full settings rows, not a compact dialog).
+local DDPadding=DDMain:FindFirstChildOfClass("UIPadding")
+if DDPadding then
+DDPadding.PaddingTop=UDim.new(0,6)
+DDPadding.PaddingBottom=UDim.new(0,6)
+DDPadding.PaddingLeft=UDim.new(0,10)
+DDPadding.PaddingRight=UDim.new(0,10)
+end
+
+-- The base component's outline only ever appears on hover, so add a
+-- persistent, clearly visible border around the dropdown row here.
+ao("UIStroke",{
+Thickness=1.5,
+Transparency=0.25,
+ThemeTag={
+Color="Outline",
+},
+Parent=DDMain,
+})
 end
 end
 
