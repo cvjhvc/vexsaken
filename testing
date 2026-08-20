@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VEXSAKEN — Roblox Scripts</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #07050d;
+            --bg2: #0d0817;
+            --card: rgba(20, 12, 34, .78);
+            --purple: #9b5cff;
+            --purple2: #6d28d9;
+            --purple3: #c084fc;
+            --text: #f7f3ff;
+            --muted: #a79bb9;
+            --green: #45e58b;
+            --border: rgba(177, 104, 255, .18);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% -10%, rgba(125, 45, 255, .24), transparent 38%),
+                radial-gradient(circle at 90% 50%, rgba(104, 36, 200, .10), transparent 35%),
+                var(--bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .35;
+            background-image:
+                linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: linear-gradient(to bottom, black, transparent 80%);
+        }
+
+        .orb {
+            position: fixed;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: .12;
+            pointer-events: none;
+            animation: floatOrb 8s ease-in-out infinite alternate;
+        }
+
+        .orb.one {
+            background: #8b5cf6;
+            top: 10%;
+            left: -150px;
+        }
+
+        .orb.two {
+            background: #c026d3;
+            right: -160px;
+            top: 55%;
+            animation-delay: 2s;
+        }
+
+        @keyframes floatOrb {
+            from {
+                transform: translateY(-25px) translateX(0);
+            }
+            to {
+                transform: translateY(35px) translateX(30px);
+            }
+        }
+
+        /* HEADER */
+
+        header {
+            width: 100%;
+            padding: 18px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(18px);
+            background: rgba(7,5,13,.72);
+            border-bottom: 1px solid rgba(255,255,255,.04);
+        }
+
+        .nav {
+            max-width: 1250px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .brand img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 10px;
+            filter: drop-shadow(0 0 15px rgba(155,92,255,.45));
+        }
+
+        .brand-name {
+            font-family: "Orbitron", sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            padding: 5px;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.025);
+            border-radius: 14px;
+        }
+
+        .tab {
+            position: relative;
+            border: 0;
+            background: transparent;
+            color: #91869f;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .3s ease;
+        }
+
+        .tab:hover {
+            color: white;
+        }
+
+        .tab.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(155,92,255,.25), rgba(109,40,217,.14));
+            box-shadow: inset 0 0 0 1px rgba(155,92,255,.15);
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: white;
+            text-decoration: none;
+            padding: 11px 17px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            box-shadow: 0 8px 30px rgba(124,58,237,.22);
+            font-weight: 800;
+            transition: .25s ease;
+            white-space: nowrap;
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(147,51,234,.35);
+        }
+
+        .discord-icon {
+            width: 19px;
+            height: 19px;
+            fill: currentColor;
+        }
+
+        /* PAGE */
+
+        main {
+            max-width: 1250px;
+            margin: auto;
+            padding: 75px 5% 100px;
+        }
+
+        .page {
+            display: none;
+            animation: pageIn .5s ease forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateX(45px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto 55px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid rgba(155,92,255,.2);
+            background: rgba(155,92,255,.08);
+            border-radius: 999px;
+            color: #c8a8ff;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            margin-bottom: 18px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(69,229,139,.8);
+        }
+
+        h1 {
+            font-family: "Orbitron", sans-serif;
+            font-size: clamp(44px, 8vw, 86px);
+            line-height: .95;
+            letter-spacing: 3px;
+            margin-bottom: 22px;
+            background: linear-gradient(135deg, #fff, #c084fc 48%, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 50px rgba(139,92,246,.12);
+        }
+
+        .hero p {
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 16px;
+            max-width: 680px;
+            margin: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            border: 0;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            transition: .25s ease;
+        }
+
+        .primary-btn {
+            color: white;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            box-shadow: 0 10px 35px rgba(109,40,217,.25);
+        }
+
+        .secondary-btn {
+            color: #d6c7e9;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.035);
+        }
+
+        .primary-btn:hover,
+        .secondary-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* GAME SUPPORT */
+
+        .support-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-size: 12px;
+            color: #a99bb9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .support-title .dot {
+            width: 8px;
+            height: 8px;
+        }
+
+        .game-marquee {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 65px;
+            padding: 8px 0 15px;
+        }
+
+        .game-track {
+            display: flex;
+            width: max-content;
+            gap: 18px;
+            animation: slideGames 28s linear infinite;
+        }
+
+        .game-marquee:hover .game-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes slideGames {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        .game-chip {
+            width: 245px;
+            height: 115px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 17px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: #100a1a;
+            box-shadow: 0 15px 35px rgba(0,0,0,.25);
+        }
+
+        .game-chip img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .58;
+            transition: .4s ease;
+        }
+
+        .game-chip:hover img {
+            transform: scale(1.08);
+            opacity: .75;
+        }
+
+        .game-chip::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 15%, rgba(5,3,10,.9));
+        }
+
+        .game-chip-name {
+            position: absolute;
+            z-index: 2;
+            bottom: 13px;
+            left: 15px;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .game-chip-status {
+            position: absolute;
+            z-index: 2;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            color: #b9fbd2;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: rgba(7,20,14,.75);
+            border: 1px solid rgba(69,229,139,.15);
+        }
+
+        .game-chip-status .dot {
+            width: 5px;
+            height: 5px;
+        }
+
+        /* SCRIPT GRID */
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .section-heading h2 {
+            font-family: "Orbitron", sans-serif;
+            font-size: 25px;
+            margin-bottom: 9px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .scripts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .script-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(145deg, rgba(26,16,42,.9), rgba(12,8,20,.9));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            min-width: 0;
+            transition: .3s ease;
+        }
+
+        .script-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(155,92,255,.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,.3);
+        }
+
+        .script-banner {
+            height: 170px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .script-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .62;
+            transition: .5s ease;
+        }
+
+        .script-card:hover .script-banner img {
+            transform: scale(1.05);
+        }
+
+        .script-banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to bottom, transparent 10%, rgba(11,6,18,.97) 100%);
+        }
+
+        .status {
+            position: absolute;
+            z-index: 3;
+            top: 13px;
+            right: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            color: #b9fbd2;
+            background: rgba(7,17,12,.8);
+            border: 1px solid rgba(69,229,139,.2);
+        }
+
+        .status .dot {
+            width: 6px;
+            height: 6px;
+        }
+
+        .script-title {
+            position: absolute;
+            z-index: 3;
+            left: 19px;
+            bottom: 15px;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .script-body {
+            padding: 18px;
+        }
+
+        .script-description {
+            color: #9e93aa;
+            font-size: 13px;
+            line-height: 1.65;
+            margin-bottom: 15px;
+        }
+
+        .code-box {
+            width: 100%;
+            min-height: 90px;
+            padding: 14px;
+            padding-right: 14px;
+            border-radius: 12px;
+            background: rgba(0,0,0,.3);
+            border: 1px solid rgba(255,255,255,.06);
+            color: #cbb8df;
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+            line-height: 1.6;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 13px;
+        }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .copy-btn,
+        .play-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            min-height: 43px;
+            border-radius: 11px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 800;
+            transition: .25s ease;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .copy-btn {
+            color: white;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        }
+
+        .play-btn {
+            color: #ddd2ea;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .copy-btn:hover,
+        .play-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+        }
+
+        /* GAMES PAGE */
+
+        .games-large {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .large-game {
+            position: relative;
+            height: 260px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .large-game img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: .5s ease;
+            opacity: .65;
+        }
+
+        .large-game:hover img {
+            transform: scale(1.06);
+            opacity: .8;
+        }
+
+        .large-game::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 15%, rgba(7,4,12,.95));
+        }
+
+        .large-game-content {
+            position: absolute;
+            z-index: 2;
+            left: 22px;
+            right: 22px;
+            bottom: 20px;
+        }
+
+        .large-game-content h3 {
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .large-game-content p {
+            color: #aaa0b3;
+            font-size: 13px;
+            margin-bottom: 13px;
+        }
+
+        /* PREMIUM */
+
+        .premium-box {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 45px;
+            text-align: center;
+            border: 1px solid rgba(155,92,255,.22);
+            border-radius: 25px;
+            background:
+                radial-gradient(circle at top, rgba(139,92,246,.16), transparent 50%),
+                rgba(18,10,29,.8);
+            box-shadow: 0 30px 80px rgba(0,0,0,.3);
+        }
+
+        .premium-icon {
+            width: 60px;
+            height: 60px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 20px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #a855f7, #6d28d9);
+            font-size: 27px;
+            box-shadow: 0 12px 40px rgba(139,92,246,.3);
+        }
+
+        .premium-box h2 {
+            font-family: "Orbitron", sans-serif;
+            font-size: 29px;
+            margin-bottom: 12px;
+        }
+
+        .premium-box p {
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 10px;
+            text-align: left;
+            max-width: 450px;
+            margin: 0 auto 25px;
+        }
+
+        .feature {
+            padding: 12px 15px;
+            border-radius: 11px;
+            background: rgba(255,255,255,.03);
+            color: #c7bdd2;
+            font-size: 13px;
+        }
+
+        .feature span {
+            color: var(--green);
+            margin-right: 8px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid rgba(255,255,255,.05);
+            padding: 25px 5%;
+            text-align: center;
+            color: #70687a;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+            header {
+                padding: 13px 4%;
+            }
+
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .brand {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tabs {
+                order: 2;
+            }
+
+            .discord-btn {
+                order: 3;
+            }
+
+            main {
+                padding-top: 55px;
+            }
+
+            .scripts-grid,
+            .games-large {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .tab {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+
+            .discord-btn {
+                padding: 10px 13px;
+                font-size: 11px;
+            }
+
+            .hero {
+                margin-bottom: 40px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .card-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .premium-box {
+                padding: 30px 20px;
+            }
+
+            .game-chip {
+                width: 215px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<header>
+    <nav class="nav">
+
+        <a href="#" class="brand" onclick="switchTab('home'); return false;">
+            <img src="https://cdn.phototourl.com/free/2026-08-19-0acb634b-376f-4960-af4d-beb8d71978b5.png" alt="Vexsaken Logo">
+            <span class="brand-name">VEXSAKEN</span>
+        </a>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="home">Home</button>
+            <button class="tab" data-tab="games">Games</button>
+            <button class="tab" data-tab="premium">Premium</button>
+        </div>
+
+        <a class="discord-btn" href="https://discord.gg/DXHHswuYPb" target="_blank" rel="noopener">
+            <svg class="discord-icon" viewBox="0 0 24 24">
+                <path d="M19.54 0c1.08 1.9 1.82 3.95 2.18 6.11a.07.07 0 0 1-.04.07 17.2 17.2 0 0 0-3.02-1.48.04.04 0 0 0-.05.02c-.21.39-.4.8-.57 1.21a15.9 15.9 0 0 0-4.08-.61c-1.39 0-2.77.2-4.08.61-.17-.41-.37-.82-.58-1.21a.04.04 0 0 0-.05-.02c-1.05.41-2.06.91-3.02 1.48a.07.07 0 0 0-.03.07C6.55 10.26 6.96 14.21 7.01 18.09a.07.07 0 0 0 .03.06c1.16.86 2.44 1.52 3.8 1.95a.06.06 0 0 0 .07-.02c.29-.39.55-.8.78-1.23a.05.05 0 0 0-.03-.07 12.4 12.4 0 0 1-1.19-.57.05.05 0 0 1 0-.08c.08-.06.16-.12.24-.18a.05.05 0 0 1 .05 0c3.49 1.59 7.26 1.59 10.71 0a.05.05 0 0 1 .05 0c.08.06.16.12.24.18a.05.05 0 0 1 0 .08c-.38.22-.78.41-1.19.57a.05.05 0 0 0-.03.07c.23.43.49.84.78 1.23a.06.06 0 0 0 .07.02 15.8 15.8 0 0 0 3.8-1.95.07.07 0 0 0 .03-.06c.06-4.51-.77-8.42-2.66-12.02a.05.05 0 0 0-.04-.02c-.1-.02-.21-.03-.31-.04L22 5.5c-.02-.03-.04-.06-.07-.08a.05.05 0 0 0-.06 0c-.95.34-1.87.76-2.75 1.27a.05.05 0 0 1-.07-.02c-.2-.47-.41-.93-.65-1.38a.05.05 0 0 1 .02-.07c.82-.48 1.67-.88 2.55-1.2a.05.05 0 0 0 .03-.07C20.69 2.53 20.13 1.31 19.54 0zM8.8 13.65c-1.04 0-1.9-.96-1.9-2.14s.84-2.14 1.9-2.14c1.07 0 1.92.97 1.9 2.14 0 1.18-.84 2.14-1.9 2.14zm6.4 0c-1.04 0-1.9-.96-1.9-2.14s.84-2.14 1.9-2.14c1.07 0 1.92.97 1.9 2.14 0 1.18-.84 2.14-1.9 2.14z"/>
+            </svg>
+            Discord
+        </a>
+
+    </nav>
+</header>
+
+
+<main>
+
+    <!-- HOME -->
+
+    <section id="home" class="page active">
+
+        <div class="hero">
+
+            <div class="pill">
+                <span class="dot"></span>
+                Vexsaken is online
+            </div>
+
+            <h1>VEXSAKEN</h1>
+
+            <p>
+                Constant updates and overpowered features.
+                Use the script, drop it into your executor, and get moving.
+                New releases, updates, and support land in the Discord first.
+            </p>
+
+            <div class="hero-buttons">
+                <button class="primary-btn" onclick="switchTab('games')">
+                    Explore Games
+                </button>
+
+                <a class="secondary-btn" href="https://discord.gg/DXHHswuYPb" target="_blank">
+                    Join Discord
+                </a>
+            </div>
+
+        </div>
+
+
+        <div class="support-title">
+            <span class="dot"></span>
+            5 Game Supports
+        </div>
+
+        <!-- LOOPING GAME SUPPORT -->
+
+        <div class="game-marquee">
+
+            <div class="game-track">
+
+                <div class="game-chip">
+                    <img data-place="18687417158" alt="Forsaken">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Forsaken</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="108843562394237" alt="Monkey Bomb Tag">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Monkey Bomb Tag</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="6403373529" alt="Slap Battles">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Slap Battles</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="84645816099366" alt="Bite By Night">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Bite By Night</div>
+                </div>
+
+                <div class="game-chip">
+                    <img src="https://placehold.co/600x338/140b20/9b5cff?text=COMING+SOON" alt="Coming Soon">
+                    <div class="game-chip-status">
+                        <span class="dot" style="background:#a78bfa;box-shadow:none"></span>
+                        SOON
+                    </div>
+                    <div class="game-chip-name">Coming Soon</div>
+                </div>
+
+                <!-- DUPLICATE FOR SEAMLESS LOOP -->
+
+                <div class="game-chip">
+                    <img data-place="18687417158" alt="Forsaken">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Forsaken</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="108843562394237" alt="Monkey Bomb Tag">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Monkey Bomb Tag</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="6403373529" alt="Slap Battles">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Slap Battles</div>
+                </div>
+
+                <div class="game-chip">
+                    <img data-place="84645816099366" alt="Bite By Night">
+                    <div class="game-chip-status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="game-chip-name">Bite By Night</div>
+                </div>
+
+                <div class="game-chip">
+                    <img src="https://placehold.co/600x338/140b20/9b5cff?text=COMING+SOON" alt="Coming Soon">
+                    <div class="game-chip-status">
+                        <span class="dot" style="background:#a78bfa;box-shadow:none"></span>
+                        SOON
+                    </div>
+                    <div class="game-chip-name">Coming Soon</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section-heading">
+            <h2>Scripts</h2>
+            <p>Scripts you can use every day.</p>
+        </div>
+
+
+        <div class="scripts-grid">
+
+            <!-- FORSAKEN -->
+
+            <article class="script-card">
+
+                <div class="script-banner">
+                    <img data-place="18687417158" alt="Forsaken">
+                    <div class="status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="script-title">Forsaken</div>
+                </div>
+
+                <div class="script-body">
+
+                    <div class="script-description">
+                        Vexsaken script for Forsaken with constant updates and powerful features.
+                    </div>
+
+                    <div class="code-box" id="code-forsaken">loadstring(game:HttpGet("https://raw.githubusercontent.com/cvjhvc/vexsaken/main/vexsaken6.7"))()</div>
+
+                    <div class="card-actions">
+                        <button class="copy-btn" onclick="copyScript('code-forsaken', this)">
+                            Copy Script
+                        </button>
+
+                        <a class="play-btn"
+                           href="https://www.roblox.com/games/18687417158/"
+                           target="_blank">
+                            ▶ Play Game
+                        </a>
+                    </div>
+
+                </div>
+            </article>
+
+
+            <!-- MONKEY BOMB TAG -->
+
+            <article class="script-card">
+
+                <div class="script-banner">
+                    <img data-place="108843562394237" alt="Monkey Bomb Tag">
+                    <div class="status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="script-title">Monkey Bomb Tag</div>
+                </div>
+
+                <div class="script-body">
+
+                    <div class="script-description">
+                        Ready-to-use Monkey Bomb Tag script. Grab it, copy it, and get moving.
+                    </div>
+
+                    <div class="code-box" id="code-monkey">loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/5df6e60f7ef238775b645ddbec41e2e7df27ecffd770af3853e21bc232c6a6b3/download"))()</div>
+
+                    <div class="card-actions">
+                        <button class="copy-btn" onclick="copyScript('code-monkey', this)">
+                            Copy Script
+                        </button>
+
+                        <a class="play-btn"
+                           href="https://www.roblox.com/games/108843562394237/"
+                           target="_blank">
+                            ▶ Play Game
+                        </a>
+                    </div>
+
+                </div>
+            </article>
+
+
+            <!-- SLAP BATTLES -->
+
+            <article class="script-card">
+
+                <div class="script-banner">
+                    <img data-place="6403373529" alt="Slap Battles">
+                    <div class="status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="script-title">Slap Battles</div>
+                </div>
+
+                <div class="script-body">
+
+                    <div class="script-description">
+                        Vexsaken Slap Battles script with regular updates and new features.
+                    </div>
+
+                    <div class="code-box" id="code-slap">loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/2849007652020ce23c1d01e6e643af220b1cfefb0b60740f9b2284cb3e397d81/download"))()</div>
+
+                    <div class="card-actions">
+                        <button class="copy-btn" onclick="copyScript('code-slap', this)">
+                            Copy Script
+                        </button>
+
+                        <a class="play-btn"
+                           href="https://www.roblox.com/games/6403373529/"
+                           target="_blank">
+                            ▶ Play Game
+                        </a>
+                    </div>
+
+                </div>
+            </article>
+
+
+            <!-- BITE BY NIGHT -->
+
+            <article class="script-card">
+
+                <div class="script-banner">
+                    <img data-place="84645816099366" alt="Bite By Night">
+                    <div class="status">
+                        <span class="dot"></span>
+                        WORKING
+                    </div>
+                    <div class="script-title">Bite By Night</div>
+                </div>
+
+                <div class="script-body">
+
+                    <div class="script-description">
+                        Bite By Night script with Vexsaken's latest features and updates.
+                    </div>
+
+                    <div class="code-box" id="code-bite">loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/ff8456b7f1d63fe042cb6597636e04c2.lua"))()</div>
+
+                    <div class="card-actions">
+                        <button class="copy-btn" onclick="copyScript('code-bite', this)">
+                            Copy Script
+                        </button>
+
+                        <a class="play-btn"
+                           href="https://www.roblox.com/games/84645816099366/"
+                           target="_blank">
+                            ▶ Play Game
+                        </a>
+                    </div>
+
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- GAMES -->
+
+    <section id="games" class="page">
+
+        <div class="hero">
+
+            <div class="pill">
+                <span class="dot"></span>
+                Supported Games
+            </div>
+
+            <h1>GAMES</h1>
+
+            <p>
+                Explore every Roblox game currently supported by Vexsaken.
+                More games are being added as updates roll out.
+            </p>
+
+        </div>
+
+
+        <div class="games-large">
+
+            <div class="large-game">
+                <img data-place="18687417158" alt="Forsaken">
+
+                <div class="large-game-content">
+                    <h3>Forsaken</h3>
+                    <p>Vexsaken script available.</p>
+
+                    <a class="primary-btn"
+                       href="https://www.roblox.com/games/18687417158/"
+                       target="_blank">
+                        Play Forsaken
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="large-game">
+                <img data-place="108843562394237" alt="Monkey Bomb Tag">
+
+                <div class="large-game-content">
+                    <h3>Monkey Bomb Tag</h3>
+                    <p>Vexsaken script available.</p>
+
+                    <a class="primary-btn"
+                       href="https://www.roblox.com/games/108843562394237/"
+                       target="_blank">
+                        Play Game
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="large-game">
+                <img data-place="6403373529" alt="Slap Battles">
+
+                <div class="large-game-content">
+                    <h3>Slap Battles</h3>
+                    <p>Vexsaken script available.</p>
+
+                    <a class="primary-btn"
+                       href="https://www.roblox.com/games/6403373529/"
+                       target="_blank">
+                        Play Slap Battles
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="large-game">
+                <img data-place="84645816099366" alt="Bite By Night">
+
+                <div class="large-game-content">
+                    <h3>Bite By Night</h3>
+                    <p>Vexsaken script available.</p>
+
+                    <a class="primary-btn"
+                       href="https://www.roblox.com/games/84645816099366/"
+                       target="_blank">
+                        Play Game
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="large-game">
+                <img src="https://placehold.co/1200x675/140b20/9b5cff?text=COMING+SOON" alt="Coming Soon">
+
+                <div class="large-game-content">
+                    <h3>Coming Soon</h3>
+                    <p>Another game support is on the way.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PREMIUM -->
+
+    <section id="premium" class="page">
+
+        <div class="hero">
+
+            <div class="pill">
+                <span class="dot"></span>
+                Vexsaken Premium
+            </div>
+
+            <h1>PREMIUM</h1>
+
+            <p>
+                Take your Vexsaken experience further with premium features,
+                early releases and exclusive updates.
+            </p>
+
+        </div>
+
+
+        <div class="premium-box">
+
+            <div class="premium-icon">✦</div>
+
+            <h2>VEXSAKEN PREMIUM</h2>
+
+            <p>
+                Premium features are being prepared.
+                Join the Discord to stay updated when Premium officially launches.
+            </p>
+
+            <div class="feature-list">
+
+                <div class="feature">
+                    <span>✓</span>
+                    Early access to selected releases
+                </div>
+
+                <div class="feature">
+                    <span>✓</span>
+                    Premium-only features
+                </div>
+
+                <div class="feature">
+                    <span>✓</span>
+                    Priority updates
+                </div>
+
+                <div class="feature">
+                    <span>✓</span>
+                    Exclusive Discord access
+                </div>
+
+            </div>
+
+            <a class="primary-btn"
+               href="https://discord.gg/DXHHswuYPb"
+               target="_blank">
+                Join Discord
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    © 2026 VEXSAKEN. Built for the community.
+</footer>
+
+
+<script>
+
+    /*
+        ============================================
+        TAB SYSTEM
+        ============================================
+    */
+
+    const tabs = document.querySelectorAll(".tab");
+    const pages = document.querySelectorAll(".page");
+
+    function switchTab(tabName) {
+
+        const current = document.querySelector(".page.active");
+        const next = document.getElementById(tabName);
+
+        if (!next || current === next) return;
+
+        tabs.forEach(tab => {
+            tab.classList.toggle(
+                "active",
+                tab.dataset.tab === tabName
+            );
+        });
+
+        current.classList.remove("active");
+
+        // Restart animation every time the tab changes
+        next.classList.remove("active");
+
+        void next.offsetWidth;
+
+        next.classList.add("active");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    tabs.forEach(tab => {
+
+        tab.addEventListener("click", () => {
+            switchTab(tab.dataset.tab);
+        });
+
+    });
+
+
+    /*
+        ============================================
+        COPY SCRIPT
+        ============================================
+    */
+
+    async function copyScript(id, button) {
+
+        const code = document.getElementById(id).innerText;
+
+        try {
+
+            await navigator.clipboard.writeText(code);
+
+        } catch (error) {
+
+            const textarea = document.createElement("textarea");
+
+            textarea.value = code;
+
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+
+            document.body.appendChild(textarea);
+
+            textarea.focus();
+            textarea.select();
+
+            document.execCommand("copy");
+
+            textarea.remove();
+        }
+
+        const originalText = button.innerText;
+
+        button.innerText = "✓ Copied!";
+        button.classList.add("copied");
+
+        setTimeout(() => {
+
+            button.innerText = originalText;
+            button.classList.remove("copied");
+
+        }, 1600);
+    }
+
+
+    /*
+        ============================================
+        ROBLOX THUMBNAILS
+        ============================================
+
+        We start with a Roblox PLACE ID.
+
+        Roblox's thumbnail endpoint uses UNIVERSE IDs,
+        so we first resolve the place to its universe,
+        then request the game's thumbnail.
+    */
+
+    async function loadRobloxImages() {
+
+        const images = document.querySelectorAll("[data-place]");
+
+        for (const img of images) {
+
+            const placeId = img.dataset.place;
+
+            try {
+
+                const universeResponse = await fetch(
+                    `https://apis.roblox.com/universes/v1/places/${placeId}/universe`
+                );
+
+                if (!universeResponse.ok) {
+                    throw new Error("Universe lookup failed");
+                }
+
+                const universeData = await universeResponse.json();
+
+                const universeId = universeData.universeId;
+
+                const thumbnailResponse = await fetch(
+                    `https://thumbnails.roblox.com/v1/games/${universeId}/thumbnails?size=768x432&format=Png&isCircular=false`
+                );
+
+                if (!thumbnailResponse.ok) {
+                    throw new Error("Thumbnail lookup failed");
+                }
+
+                const thumbnailData = await thumbnailResponse.json();
+
+                if (
+                    thumbnailData.data &&
+                    thumbnailData.data.length &&
+                    thumbnailData.data[0].imageUrl
+                ) {
+
+                    img.src = thumbnailData.data[0].imageUrl;
+
+                }
+
+            } catch (error) {
+
+                console.log(
+                    `Could not load Roblox thumbnail for ${placeId}`,
+                    error
+                );
+
+                img.src =
+                    "https://placehold.co/1200x675/140b20/9b5cff?text=VEXSAKEN";
+
+            }
+
+        }
+
+    }
+
+    loadRobloxImages();
+
+
+    /*
+        ============================================
+        PREVENT BROKEN IMAGE ICONS
+        ============================================
+    */
+
+    document.querySelectorAll("img").forEach(img => {
+
+        img.addEventListener("error", () => {
+
+            if (!img.src.includes("placehold.co")) {
+
+                img.src =
+                    "https://placehold.co/1200x675/140b20/9b5cff?text=VEXSAKEN";
+
+            }
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
