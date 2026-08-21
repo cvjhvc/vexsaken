@@ -16788,7 +16788,7 @@ OpenButton=au.OpenButton,
 BottomDragBarEnabled=not(au.BottomDragBarEnabled==false or au.BottomDragEnabled==false),
 WatermarkConfig=au.Watermark,
 BannerImage=au.BannerImage or nil,
-BannerImageHeight=au.BannerImageHeight or 110,
+BannerImageHeight=au.BannerImageHeight or 52,
 
 Position=UDim2.new(0.5,0,0.5,0),
 UICorner=nil,
@@ -16978,7 +16978,7 @@ if av.BannerImage then
 
 	_bannerFrame = ak("Frame",{
 		Name="SideBarBanner",
-		Size=UDim2.new(1,-(av.UIPadding+7),0,av.BannerImageHeight),
+		Size=UDim2.new(1,-av.UIPadding,0,av.BannerImageHeight),
 		Position=UDim2.new(0,av.UIPadding/2,0,av.UIPadding/2),
 		BackgroundTransparency=1,
 		ClipsDescendants=false,
