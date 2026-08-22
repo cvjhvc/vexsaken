@@ -277,6 +277,7 @@ TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
 TabBorderTransparency=1,
+TabBorderTransparencyIdle=0.92,
 TabBorderTransparencyActive=0.75,
 TabBorder="White",
 
@@ -15261,6 +15262,10 @@ PaddingBottom=UDim.new(0,an.TabPaddingY),
 }),
 },true)
 
+if an.Border then
+an.UIElements.Main.Outline.ImageTransparency=0.92
+end
+
 local ap=0
 local aq
 local ar
@@ -15506,6 +15511,11 @@ if not an.Locked then
 ae.SetThemeTag(an.UIElements.Main.Frame,{
 ImageTransparency="TabBorderTransparency"
 },0.08)
+if an.Border and not an.Selected then
+ae.SetThemeTag(an.UIElements.Main.Outline,{
+ImageTransparency="TabBorderTransparencyIdle"
+},0.08)
+end
 end
 end)
 
@@ -15688,7 +15698,7 @@ ImageTransparency="TabBorderTransparency"
 },0.15)
 if aq.Border then
 ae.SetThemeTag(aq.UIElements.Main.Outline,{
-ImageTransparency="TabBorderTransparency"
+ImageTransparency="TabBorderTransparencyIdle"
 },0.15)
 end
 ae.SetThemeTag(aq.UIElements.Main.Frame.TextLabel,{
