@@ -18871,13 +18871,14 @@ Parent=M,
 
 -- Title/Desc overlay: dark gradient scrim + text
 if H.Title or H.Desc then
--- scrim: BackgroundTransparency=0 required for UIGradient to render
+-- scrim: full size so it gets clipped by parent rounded corners
+-- UIGradient fades from transparent at top to dark at bottom
 local scrim=Instance.new("Frame")
 scrim.Name="TitleScrim"
 scrim.BackgroundColor3=Color3.fromRGB(0,0,0)
 scrim.BackgroundTransparency=0
-scrim.Size=UDim2.new(1,0,0.65,0)
-scrim.Position=UDim2.new(0,0,0.35,0)
+scrim.Size=UDim2.new(1,0,1,0)
+scrim.Position=UDim2.new(0,0,0,0)
 scrim.BorderSizePixel=0
 scrim.ZIndex=3
 scrim.Parent=M
@@ -18885,18 +18886,19 @@ scrim.Parent=M
 local scrimGrad=Instance.new("UIGradient")
 scrimGrad.Transparency=NumberSequence.new({
 NumberSequenceKeypoint.new(0,1),
-NumberSequenceKeypoint.new(0.3,0.5),
+NumberSequenceKeypoint.new(0.45,1),
+NumberSequenceKeypoint.new(0.75,0.45),
 NumberSequenceKeypoint.new(1,0.1),
 })
 scrimGrad.Rotation=90
 scrimGrad.Parent=scrim
 
--- text container anchored to bottom
+-- text container: full size, text pinned to bottom via VerticalAlignment
 local textHolder=Instance.new("Frame")
 textHolder.Name="TitleHolder"
 textHolder.BackgroundTransparency=1
-textHolder.Size=UDim2.new(1,0,0.65,0)
-textHolder.Position=UDim2.new(0,0,0.35,0)
+textHolder.Size=UDim2.new(1,0,1,0)
+textHolder.Position=UDim2.new(0,0,0,0)
 textHolder.ZIndex=5
 textHolder.Parent=M
 
