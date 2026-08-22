@@ -18809,23 +18809,29 @@ if typeof(H.LayoutOrder)=="number"then
 M.LayoutOrder=H.LayoutOrder
 end
 
-if typeof(H.Radius)=="number"and H.Radius>0 then
-ak("UICorner",{
-CornerRadius=UDim.new(0,H.Radius),
-Parent=M,
-})
-end
+-- Use Creator's ai.Image() so HTTP URLs are downloaded + loaded via getcustomasset
+-- p.Image(url, name, radius, folder/window, type, themed)
+local N=ai.Image(
+H.Image or"",
+"sidebar-image",
+H.Radius or 0,
+av,
+"SideBarImage",
+false
+)
 
-local N=ak("ImageLabel",{
-Name="Image",
-Parent=M,
-BackgroundTransparency=1,
-Size=UDim2.new(1,0,1,0),
-Image=H.Image or"",
-ScaleType=H.ScaleType or Enum.ScaleType.Crop,
-ImageColor3=H.ImageColor3 or Color3.new(1,1,1),
-ImageTransparency=H.ImageTransparency or 0,
-})
+if N then
+N.Size=UDim2.new(1,0,1,0)
+N.Parent=M
+local img=N:FindFirstChildWhichIsA"ImageLabel"
+if img then
+img.ScaleType=H.ScaleType or Enum.ScaleType.Crop
+img.ImageTransparency=H.ImageTransparency or 0
+if H.ImageColor3 then
+img.ImageColor3=H.ImageColor3
+end
+end
+end
 
 local O={
 __type="SideBarImage",
@@ -18834,7 +18840,19 @@ ImageFrame=N,
 }
 
 function O.SetImage(P,Q)
-P.ImageFrame.Image=Q or""
+if P.ImageFrame then
+P.ImageFrame:Destroy()
+end
+local newN=ai.Image(Q or"","sidebar-image",H.Radius or 0,av,"SideBarImage",false)
+if newN then
+newN.Size=UDim2.new(1,0,1,0)
+newN.Parent=P.ElementFrame
+local img=newN:FindFirstChildWhichIsA"ImageLabel"
+if img then
+img.ScaleType=H.ScaleType or Enum.ScaleType.Crop
+end
+end
+P.ImageFrame=newN
 return P
 end
 
@@ -18844,7 +18862,8 @@ return P
 end
 
 function O.SetScaleType(P,Q)
-P.ImageFrame.ScaleType=Q
+local img=P.ImageFrame and P.ImageFrame:FindFirstChildWhichIsA"ImageLabel"
+if img then img.ScaleType=Q end
 return P
 end
 
