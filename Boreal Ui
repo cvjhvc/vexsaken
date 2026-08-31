@@ -276,9 +276,9 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=0.85,
-TabBorderTransparencyIdle=0.7,
-TabBorderTransparencyActive=0.35,
+TabBorderTransparency=1,
+TabBorderTransparencyIdle=0.92,
+TabBorderTransparencyActive=0.75,
 TabBorder="White",
 
 
@@ -13729,6 +13729,28 @@ ScrollingEnabled=true,
 ElasticBehavior="Never",
 ClipsDescendants=true,
 },{
+aa.NewRoundFrame(math.max(al.Window.ElementConfig.UICorner-2,6),"Squircle",{
+Name="Pill",
+Size=UDim2.new(0,0,0,0),
+Position=UDim2.new(0,0,0,0),
+BackgroundTransparency=1,
+ZIndex=0,
+Visible=false,
+ThemeTag={
+ImageColor3="TabBackground",
+},
+ImageTransparency=1,
+},{
+aa.NewRoundFrame(math.max(al.Window.ElementConfig.UICorner-2,6),"Glass-1.4",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+ThemeTag={
+ImageColor3="TabBorder",
+},
+ImageTransparency=1,
+Name="Outline",
+}),
+},true),
 ad("UIListLayout",{
 FillDirection="Horizontal",
 Padding=UDim.new(0,am.TabGap),
@@ -13754,6 +13776,7 @@ Content=d.Content,
 Tabs=d.Content.Tabs,
 TabsScroll=d.Content.Tabs.Scroll,
 TabsContent=d.Content.TabsContent,
+TabsPill=d.Content.Tabs.Scroll.Pill,
 Icon=aw,
 Title=ay,
 Desc=az,
@@ -13982,19 +14005,19 @@ local u
 
 if h=="Selected"then
 l=ResolveTransparency("TabBackgroundActiveTransparency",0.93)
-m=ResolveTransparency("TabBorderTransparencyActive",0.35)
+m=ResolveTransparency("TabBorderTransparencyActive",0.75)
 p=0.05
 r=0.35
 u=0
 elseif h=="Hover"then
 l=ResolveTransparency("TabBackgroundHoverTransparency",0.97)
-m=ResolveTransparency("TabBorderTransparency",0.75)
+m=ResolveTransparency("TabBorderTransparency",1)
 p=0.25
 r=0.5
 u=0.2
 else
 l=1
-m=0.9
+m=1
 p=0.4
 r=0.6
 u=0.35
@@ -14116,6 +14139,41 @@ function am.Unlock(g)
 return am
 end
 
+local function SlideTabPill(g,h)
+local j=am.UIElements and am.UIElements.TabsPill
+if not j or not g or not g.UIElements or not g.UIElements.Button then
+return
+end
+
+local l=g.UIElements.Button
+local m=UDim2.new(0,l.AbsoluteSize.X,0,l.AbsoluteSize.Y)
+local p=UDim2.new(0,l.Position.X.Offset,0,l.Position.Y.Offset)
+local r=ResolveTransparency("TabBackgroundActiveTransparency",0.93)
+local u=ResolveTransparency("TabBorderTransparencyActive",0.75)
+
+if not j.Visible or h then
+j.Visible=true
+j.Size=m
+j.Position=p
+j.ImageTransparency=r
+if j.Outline then
+j.Outline.ImageTransparency=u
+end
+else
+j.Visible=true
+ae(j,0.22,{
+Size=m,
+Position=p,
+ImageTransparency=r,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+if j.Outline then
+ae(j.Outline,0.22,{
+ImageTransparency=u,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+end
+end
+
 function am.SelectTab(g,h,j)
 local l=ResolveTab(h)
 if not l then
@@ -14126,55 +14184,17 @@ if am.SelectedTab==l then
 return l
 end
 
-local prevTab=am.SelectedTab
-local container=am.UIElements.TabsContent
-local newContent=l.UIElements.Content
-
-if prevTab and prevTab.UIElements.Content then
-SetTabState(prevTab,"Default",j)
+if am.SelectedTab and am.SelectedTab.UIElements.Content then
+am.SelectedTab.UIElements.Content.Parent=nil
+SetTabState(am.SelectedTab,"Default",j)
 end
 
 am.SelectedTab=l
 am.SelectedTabIndex=l.Index
 
-newContent.Parent=container
+l.UIElements.Content.Parent=am.UIElements.TabsContent
 SetTabState(l,"Selected",j)
-
-local prevContent=prevTab and prevTab.UIElements.Content
-
-if j or not prevContent then
-if prevContent then
-prevContent.Parent=nil
-prevContent.Position=UDim2.new(0,0,0,0)
-end
-newContent.Position=UDim2.new(0,0,0,0)
-SyncHeight(j)
-return l
-end
-
-container.ClipsDescendants=true
-
-local dir=(prevTab.Index and l.Index and l.Index<prevTab.Index)and -1 or 1
-
-newContent.Position=UDim2.new(dir,0,0,0)
-prevContent.Position=UDim2.new(0,0,0,0)
-
-ae(newContent,0.28,{
-Position=UDim2.new(0,0,0,0),
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-local slideOut=ae(prevContent,0.28,{
-Position=UDim2.new(-dir,0,0,0),
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
-
-slideOut.Completed:Connect(function()
-if am.SelectedTab~=prevTab and prevContent.Parent==container then
-prevContent.Parent=nil
-prevContent.Position=UDim2.new(0,0,0,0)
-end
-end)
-
-slideOut:Play()
+SlideTabPill(l,j)
 
 SyncHeight(j)
 return l
@@ -18895,14 +18915,14 @@ end
 end
 end
 
--- Glass-1.4 border overlay on top — thickest glass border variant available,
--- made more noticeable than the default tab border look
+-- Glass-1.4 border overlay on top — exactly like active tab border
+-- TabBorder color + TabBorderTransparencyActive (0.75) matches selected tab look
 ai.NewRoundFrame(radius,"Glass-1.4",{
 Size=UDim2.new(1,0,1,0),
 ThemeTag={
 ImageColor3="TabBorder",
+ImageTransparency="TabBorderTransparencyActive",
 },
-ImageTransparency=0.15,
 Name="Outline",
 ZIndex=10,
 Parent=M,
