@@ -1576,9 +1576,10 @@ r
 function h.Close(v)
 if not h.Closed then
 h.Closed=true
-e(u,0.45,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.55,{Position=UDim2.new(0,0,0,-80)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-task.wait(.45)
+local exitOffset=-((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y)or 800)-100
+e(u,0.35,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+e(r,0.35,{Position=UDim2.new(0,0,0,exitOffset)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
+task.wait(.35)
 u:Destroy()
 end
 end
@@ -4439,11 +4440,17 @@ Thickness=typeof(ae.Thickness)=="number"and math.max(math.floor(ae.Thickness),1)
 Padding=typeof(ae.Padding)=="number"and math.max(math.floor(ae.Padding),0)or 6,
 Transparency=typeof(ae.Transparency)=="number"and math.clamp(ae.Transparency,0,1)or nil,
 Color=af,
+Title=tostring(ae.Title or ae.Text or""),
+TitleAlignment=(ae.TitleAlignment=="Left"or ae.TitleAlignment=="Right")and ae.TitleAlignment or"Center",
+TitleSpacing=typeof(ae.TitleSpacing)=="number"and math.max(ae.TitleSpacing,0)or 8,
+TitleColor=resolveColor(ae.TitleColor),
+TitleTransparency=typeof(ae.TitleTransparency)=="number"and math.clamp(ae.TitleTransparency,0,1)or nil,
+TitleSize=typeof(ae.TitleSize)=="number"and ae.TitleSize or 13,
 }
 
 local ai=ab("Frame",{
-AnchorPoint=Vector2.new(0.5,0.5),
-Position=UDim2.new(0.5,0,0.5,0),
+AnchorPoint=Vector2.new(0,0.5),
+Position=UDim2.new(0,ah.Padding,0.5,0),
 Size=UDim2.new(1,-(ah.Padding*2),0,ah.Thickness),
 ThemeTag={
 BackgroundColor3=not ah.Color and"SectionContentDivider"or nil,
@@ -4453,44 +4460,165 @@ BackgroundColor3=ah.Color,
 BackgroundTransparency=ah.Transparency,
 })
 
+local lineAfter=ab("Frame",{
+Name="DividerLineAfter",
+AnchorPoint=Vector2.new(0,0.5),
+Position=UDim2.new(0,ah.Padding,0.5,0),
+Size=UDim2.new(0,0,0,ah.Thickness),
+Visible=false,
+ThemeTag={
+BackgroundColor3=not ah.Color and"SectionContentDivider"or nil,
+BackgroundTransparency=not ah.Transparency and"SectionContentDividerTransparency"or nil,
+},
+BackgroundColor3=ah.Color,
+BackgroundTransparency=ah.Transparency,
+})
+
+local titleLabel=ab("TextLabel",{
+Name="DividerTitle",
+AnchorPoint=Vector2.new(0,0.5),
+Position=UDim2.new(0,ah.Padding,0.5,0),
+BackgroundTransparency=1,
+AutomaticSize="X",
+Size=UDim2.new(0,0,0,ah.TitleSize+4),
+TextSize=ah.TitleSize,
+FontFace=Font.new(aa.Font,Enum.FontWeight.Medium),
+Text=ah.Title,
+Visible=false,
+TextColor3=ah.TitleColor,
+TextTransparency=ah.TitleTransparency,
+ThemeTag={
+TextColor3=not ah.TitleColor and"Text"or nil,
+},
+})
+
 local aj=ab("Frame",{
 Parent=ae.Parent,
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,0,ah.Thickness+(ah.Padding*2)),
 },{
 ai,
+lineAfter,
+titleLabel,
 })
 
-local function updateLayout()
-if ag then
-aj.Size=UDim2.new(0,ah.Thickness+(ah.Padding*2),1,0)
-ai.Size=UDim2.new(0,ah.Thickness,1,-(ah.Padding*2))
+local reflowConnections={}
+
+local function clearReflow()
+for ak=#reflowConnections,1,-1 do
+reflowConnections[ak]:Disconnect()
+reflowConnections[ak]=nil
+end
+end
+
+local function reflowTitle()
+if ag or ah.Title==""then
 return
 end
 
+local ak=aj.AbsoluteSize.X-(ah.Padding*2)
+if ak<=0 then
+return
+end
+
+local al=titleLabel.AbsoluteSize.X
+local am=ah.TitleSpacing
+
+if ah.TitleAlignment=="Left"then
+local an=math.max(ak-al-am,0)
+
+titleLabel.Position=UDim2.new(0,ah.Padding,0.5,0)
+ai.Visible=false
+
+lineAfter.Visible=an>0
+lineAfter.Position=UDim2.new(0,ah.Padding+al+am,0.5,0)
+lineAfter.Size=UDim2.new(0,an,0,ah.Thickness)
+
+elseif ah.TitleAlignment=="Right"then
+local an=math.max(ak-al-am,0)
+
+ai.Visible=an>0
+ai.Position=UDim2.new(0,ah.Padding,0.5,0)
+ai.Size=UDim2.new(0,an,0,ah.Thickness)
+
+titleLabel.Position=UDim2.new(0,ah.Padding+an+(an>0 and am or 0),0.5,0)
+lineAfter.Visible=false
+
+else
+local an=math.max(ak-al-(am*2),0)/2
+
+ai.Visible=an>0
+ai.Position=UDim2.new(0,ah.Padding,0.5,0)
+ai.Size=UDim2.new(0,an,0,ah.Thickness)
+
+titleLabel.Position=UDim2.new(0,ah.Padding+an+am,0.5,0)
+
+lineAfter.Visible=an>0
+lineAfter.Position=UDim2.new(0,ah.Padding+an+am+al+am,0.5,0)
+lineAfter.Size=UDim2.new(0,an,0,ah.Thickness)
+end
+end
+
+local function updateLayout()
+clearReflow()
+
+if ag then
+aj.Size=UDim2.new(0,ah.Thickness+(ah.Padding*2),1,0)
+ai.AnchorPoint=Vector2.new(0,0)
+ai.Position=UDim2.new(0,ah.Padding,0,ah.Padding)
+ai.Size=UDim2.new(0,ah.Thickness,1,-(ah.Padding*2))
+ai.Visible=true
+lineAfter.Visible=false
+titleLabel.Visible=false
+return
+end
+
+ai.AnchorPoint=Vector2.new(0,0.5)
+
+if ah.Title==""then
 aj.Size=UDim2.new(1,0,0,ah.Thickness+(ah.Padding*2))
+ai.Position=UDim2.new(0,ah.Padding,0.5,0)
 ai.Size=UDim2.new(1,-(ah.Padding*2),0,ah.Thickness)
+ai.Visible=true
+lineAfter.Visible=false
+titleLabel.Visible=false
+return
+end
+
+aj.Size=UDim2.new(1,0,0,math.max(ah.Thickness+(ah.Padding*2),ah.TitleSize+(ah.Padding*2)))
+titleLabel.Visible=true
+
+reflowTitle()
+
+table.insert(reflowConnections,aj:GetPropertyChangedSignal"AbsoluteSize":Connect(reflowTitle))
+table.insert(reflowConnections,titleLabel:GetPropertyChangedSignal"AbsoluteSize":Connect(reflowTitle))
 end
 
 updateLayout()
 
 local function setThemeBinding(ak,al)
-local am=aa.Objects[ai]
-if not am then
-aa.AddThemeObject(ai,{})
-am=aa.Objects[ai]
+for am=1,2 do
+local an=am==1 and ai or lineAfter
+local ao=aa.Objects[an]
+if not ao then
+aa.AddThemeObject(an,{})
+ao=aa.Objects[an]
 end
 
-if am and am.Properties then
-am.Properties[ak]=al
-aa.UpdateTheme(ai,false)
+if ao and ao.Properties then
+ao.Properties[ak]=al
+aa.UpdateTheme(an,false)
+end
 end
 end
 
 local function clearThemeBinding(ak)
-local al=aa.Objects[ai]
-if al and al.Properties then
-al.Properties[ak]=nil
+for al=1,2 do
+local am=al==1 and ai or lineAfter
+local an=aa.Objects[am]
+if an and an.Properties then
+an.Properties[ak]=nil
+end
 end
 end
 
@@ -4524,6 +4652,7 @@ end
 ak.Transparency=math.clamp(al,0,1)
 clearThemeBinding"BackgroundTransparency"
 ai.BackgroundTransparency=ak.Transparency
+lineAfter.BackgroundTransparency=ak.Transparency
 return ak
 end
 
@@ -4542,6 +4671,7 @@ end
 ak.Color=am
 clearThemeBinding"BackgroundColor3"
 ai.BackgroundColor3=am
+lineAfter.BackgroundColor3=am
 return ak
 end
 
@@ -4550,7 +4680,31 @@ setThemeBinding("BackgroundColor3","SectionContentDivider")
 return ak
 end
 
+function ah.SetTitle(ak,al)
+ak.Title=tostring(al or"")
+titleLabel.Text=ak.Title
+updateLayout()
+return ak
+end
+
+function ah.SetTitleAlignment(ak,al)
+if al=="Left"or al=="Right"or al=="Center"then
+ak.TitleAlignment=al
+reflowTitle()
+end
+return ak
+end
+
+function ah.SetTitleSpacing(ak,al)
+if typeof(al)=="number"then
+ak.TitleSpacing=math.max(al,0)
+reflowTitle()
+end
+return ak
+end
+
 function ah.Destroy(ak)
+clearReflow()
 aj:Destroy()
 end
 
@@ -15027,7 +15181,7 @@ Tags=a.ad(),
 Section=a.ae(),
 MultiSection=a.af(),
 Space=a.x(),
-Divider=a.y(),
+Divider=a.x(),
 Image=a.ag(),
 Group=a.ah(),
 Video=a.ai(),
@@ -18914,7 +19068,7 @@ local L=table.clone(H)
 L.Parent=J
 L.ParentType=L.ParentType or"Window"local
 
-M, N=aq:New(L)
+M, N=ap:New(L)
 return N
 end
 
