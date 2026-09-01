@@ -14151,20 +14151,13 @@ else
 local oldContent=prevTab and prevTab.UIElements.Content
 local contentWidth=tabsContent.AbsoluteSize.X
 
--- Slide old content out
-if oldContent and oldContent.Parent then
-ae(oldContent,0.22,{
-Position=UDim2.new(0,-slideDir*contentWidth,0,0),
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-task.delay(0.22,function()
+-- Detach old content immediately so AutomaticSize reflects new tab height
 if oldContent and oldContent.Parent then
 oldContent.Parent=nil
 oldContent.Position=UDim2.new(0,0,0,0)
 end
-end)
-end
 
--- Slide new content in from opposite side
+-- Slide new content in from the side
 newContent.Position=UDim2.new(0,slideDir*contentWidth,0,0)
 newContent.Parent=tabsContent
 ae(newContent,0.22,{
