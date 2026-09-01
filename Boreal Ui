@@ -1513,7 +1513,7 @@ end
 
 local r=b.NewRoundFrame(f.UICorner,"Squircle",{
 Size=UDim2.new(1,0,0,0),
-Position=UDim2.new(0,0,0,-80),
+Position=UDim2.new(0,0,0,0),
 AnchorPoint=Vector2.new(0,0),
 AutomaticSize="Y",
 ImageTransparency=.05,
@@ -1565,8 +1565,9 @@ p,
 j,l,
 })
 
-local u=d("Frame",{
+local u=d("CanvasGroup",{
 BackgroundTransparency=1,
+GroupTransparency=1,
 Size=UDim2.new(1,0,0,0),
 Parent=g.Holder
 },{
@@ -1582,9 +1583,8 @@ if resizeConn then
 resizeConn:Disconnect()
 resizeConn=nil
 end
-local exitOffset=-((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y)or 800)-100
 e(u,0.35,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.35,{Position=UDim2.new(0,0,0,exitOffset)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
+e(u,0.25,{GroupTransparency=1},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
 task.wait(.35)
 u:Destroy()
 end
@@ -1609,7 +1609,7 @@ e(u,0.45,{Size=UDim2.new(
 0,
 r.AbsoluteSize.Y
 )},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.45,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+e(u,0.35,{GroupTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
 -- Keep the container height in sync with the notification's real
 -- (AutomaticSize) height for the rest of its life, so any further
