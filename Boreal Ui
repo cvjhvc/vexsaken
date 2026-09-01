@@ -15272,7 +15272,7 @@ PaddingBottom=UDim.new(0,an.TabPaddingY),
 },true)
 
 if an.Border then
-an.UIElements.Main.Outline.ImageTransparency=0.92
+an.UIElements.Main.Outline.ImageTransparency=0.7
 end
 
 local ap=0
