@@ -1568,6 +1568,7 @@ j,l,
 local u=d("Frame",{
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,0,0),
+ClipsDescendants=true,
 Parent=g.Holder
 },{
 r
@@ -1583,7 +1584,11 @@ resizeConn:Disconnect()
 resizeConn=nil
 end
 local exitOffset=-((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y)or 800)-100
-e(u,0.35,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
+-- Never tween u's height below 0 — a negative-size Frame around the
+-- rounded/squircle image card (r) makes it visually invert/stretch as
+-- it crosses zero. Both tweens share the same duration/style/direction
+-- so the collapsing gap and the sliding card stay perfectly in sync.
+e(u,0.35,{Size=UDim2.new(1,0,0,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
 e(r,0.35,{Position=UDim2.new(0,0,0,exitOffset)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
 task.wait(.35)
 u:Destroy()
