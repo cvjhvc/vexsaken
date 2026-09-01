@@ -393,6 +393,10 @@ Themes=nil,
 Icons=l,
 Signals={},
 Objects={},
+ClickSound=nil,
+ClickSoundVolume=0.5,
+NotificationSound=nil,
+NotificationSoundVolume=0.5,
 LocalizationObjects={},
 FontObjects={},
 Language=string.match(g.SystemLocaleId,"^[a-z]+"),
@@ -498,6 +502,36 @@ end
 local v=r:Connect(u)
 table.insert(p.Signals,v)
 return v
+end
+
+function p.PlaySound(r,u)
+if not r or r==""then
+return nil
+end
+
+local v=Instance.new("Sound")
+v.SoundId=r
+v.Volume=u or 0.5
+v.Parent=game:GetService"SoundService"
+v:Play()
+
+game:GetService"Debris":AddItem(v,10)
+
+return v
+end
+
+function p.PlayClickSound(r)
+local u=r or p.ClickSound
+if u and u~=""then
+p.PlaySound(u,p.ClickSoundVolume)
+end
+end
+
+function p.PlayNotificationSound(r)
+local u=r or p.NotificationSound
+if u and u~=""then
+p.PlaySound(u,p.NotificationSoundVolume)
+end
 end
 
 function p.DisconnectAll()
@@ -1294,6 +1328,7 @@ BackgroundImageTransparency=g.BackgroundImageTransparency,
 Duration=g.Duration or 5,
 Buttons=g.Buttons or{},
 CanClose=g.CanClose~=false,
+Sound=g.Sound,
 UIElements={},
 Closed=false,
 }
@@ -1356,8 +1391,8 @@ ImageRectSize=b.Icon"x"[2].ImageRectSize,
 ImageRectOffset=b.Icon"x"[2].ImageRectPosition,
 BackgroundTransparency=1,
 Size=UDim2.new(0,16,0,16),
-Position=UDim2.new(1,-f.UIPadding,0,f.UIPadding),
-AnchorPoint=Vector2.new(1,0),
+Position=UDim2.new(1,-f.UIPadding,0.5,0),
+AnchorPoint=Vector2.new(1,0.5),
 ThemeTag={
 ImageColor3="Text"
 },
@@ -1478,8 +1513,8 @@ end
 
 local r=b.NewRoundFrame(f.UICorner,"Squircle",{
 Size=UDim2.new(1,0,0,0),
-Position=UDim2.new(2,0,1,0),
-AnchorPoint=Vector2.new(0,1),
+Position=UDim2.new(0,0,0,-80),
+AnchorPoint=Vector2.new(0,0),
 AutomaticSize="Y",
 ImageTransparency=.05,
 ThemeTag={
@@ -1542,7 +1577,7 @@ function h.Close(v)
 if not h.Closed then
 h.Closed=true
 e(u,0.45,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.55,{Position=UDim2.new(2,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+e(r,0.55,{Position=UDim2.new(0,0,0,-80)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 task.wait(.45)
 u:Destroy()
 end
@@ -1550,13 +1585,14 @@ end
 
 task.spawn(function()
 task.wait()
+b.PlayNotificationSound(h.Sound)
 e(u,0.45,{Size=UDim2.new(
 1,
 0,
 0,
 r.AbsoluteSize.Y
 )},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.45,{Position=UDim2.new(0,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+e(r,0.45,{Position=UDim2.new(0,0,0,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 if h.Duration then
 m.Size=UDim2.new(0,r.DurationFrame.AbsoluteSize.X,1,0)
 e(r.DurationFrame.Frame,h.Duration,{Size=UDim2.new(0,0,1,0)},Enum.EasingStyle.Linear,Enum.EasingDirection.InOut):Play()
@@ -2260,6 +2296,7 @@ ab.AddSignal(ao.MouseLeave,function()
 ad(ao.Frame,0.047,{ImageTransparency=1}):Play()
 end)
 ab.AddSignal(ao.MouseButton1Up,function()
+ab.PlayClickSound()
 if aj then
 aj:Close()()
 end
@@ -7502,6 +7539,7 @@ end
 ag:Set(ai,false,false)
 
 aa.AddSignal(ag.ToggleFrame.UIElements.Main.MouseButton1Click,function()
+aa.PlayClickSound()
 ag:Set(not ag.Value,nil,false)
 end)
 
@@ -19798,6 +19836,14 @@ end
 
 function aa.SetNotificationLower(au,av)
 at.SetLower(av)
+end
+
+function aa.SetClickSound(au,av)
+an.ClickSound=av
+end
+
+function aa.SetNotificationSound(au,av)
+an.NotificationSound=av
 end
 
 function aa.SetFont(au,av)
