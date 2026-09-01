@@ -276,9 +276,9 @@ TabTitle="Text",
 TabIcon="Icon",
 TabIconTransparency=0.4,
 TabIconTransparencyActive=0.1,
-TabBorderTransparency=0.85,
-TabBorderTransparencyIdle=0.7,
-TabBorderTransparencyActive=0.35,
+TabBorderTransparency=1,
+TabBorderTransparencyIdle=0.92,
+TabBorderTransparencyActive=0.75,
 TabBorder="White",
 
 
@@ -13982,19 +13982,19 @@ local u
 
 if h=="Selected"then
 l=ResolveTransparency("TabBackgroundActiveTransparency",0.93)
-m=ResolveTransparency("TabBorderTransparencyActive",0.35)
+m=ResolveTransparency("TabBorderTransparencyActive",0.75)
 p=0.05
 r=0.35
 u=0
 elseif h=="Hover"then
 l=ResolveTransparency("TabBackgroundHoverTransparency",0.97)
-m=ResolveTransparency("TabBorderTransparency",0.85)
+m=ResolveTransparency("TabBorderTransparency",1)
 p=0.25
 r=0.5
 u=0.2
 else
 l=1
-m=0.9
+m=1
 p=0.4
 r=0.6
 u=0.35
@@ -14127,14 +14127,40 @@ return l
 end
 
 if am.SelectedTab and am.SelectedTab.UIElements.Content then
-am.SelectedTab.UIElements.Content.Parent=nil
+local oldContent=am.SelectedTab.UIElements.Content
 SetTabState(am.SelectedTab,"Default",j)
+if j then
+oldContent.Parent=nil
+else
+-- Fade out old content, then detach
+ae(oldContent,0.12,{
+GroupTransparency=1,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+task.delay(0.12,function()
+if oldContent and oldContent.Parent then
+oldContent.Parent=nil
+oldContent.GroupTransparency=0
+end
+end)
+end
 end
 
 am.SelectedTab=l
 am.SelectedTabIndex=l.Index
 
-l.UIElements.Content.Parent=am.UIElements.TabsContent
+local newContent=l.UIElements.Content
+if j then
+newContent.Parent=am.UIElements.TabsContent
+else
+-- Start invisible, parent it, then fade in
+newContent.GroupTransparency=1
+newContent.Parent=am.UIElements.TabsContent
+task.defer(function()
+ae(newContent,0.15,{
+GroupTransparency=0,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end)
+end
 SetTabState(l,"Selected",j)
 
 SyncHeight(j)
@@ -15272,7 +15298,7 @@ PaddingBottom=UDim.new(0,an.TabPaddingY),
 },true)
 
 if an.Border then
-an.UIElements.Main.Outline.ImageTransparency=0.7
+an.UIElements.Main.Outline.ImageTransparency=0.92
 end
 
 local ap=0
@@ -18856,14 +18882,14 @@ end
 end
 end
 
--- Glass-1.4 border overlay on top — exactly like active tab border
--- TabBorder color + TabBorderTransparencyActive (0.75) matches selected tab look
+-- Glass-1.4 border overlay on top — visible glass border effect
+-- Uses a lower transparency (0.35) so the border is clearly visible
 ai.NewRoundFrame(radius,"Glass-1.4",{
 Size=UDim2.new(1,0,1,0),
 ThemeTag={
 ImageColor3="TabBorder",
-ImageTransparency="TabBorderTransparencyActive",
 },
+ImageTransparency=0.35,
 Name="Outline",
 ZIndex=10,
 Parent=M,
