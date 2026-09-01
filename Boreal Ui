@@ -13742,6 +13742,7 @@ Name="TabsContent",
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 BackgroundTransparency=1,
+ClipsDescendants=true,
 }),
 }),
 })
@@ -14126,43 +14127,53 @@ if am.SelectedTab==l then
 return l
 end
 
-if am.SelectedTab and am.SelectedTab.UIElements.Content then
-local oldContent=am.SelectedTab.UIElements.Content
-SetTabState(am.SelectedTab,"Default",j)
-if j then
-oldContent.Parent=nil
-else
--- Fade out old content, then detach
-ae(oldContent,0.12,{
-GroupTransparency=1,
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-task.delay(0.12,function()
-if oldContent and oldContent.Parent then
-oldContent.Parent=nil
-oldContent.GroupTransparency=0
-end
-end)
-end
+local prevTab=am.SelectedTab
+local prevIndex=am.SelectedTabIndex or 1
+local nextIndex=l.Index
+local slideDir=nextIndex>prevIndex and 1 or -1
+
+if prevTab and prevTab.UIElements.Content then
+SetTabState(prevTab,"Default",j)
 end
 
 am.SelectedTab=l
 am.SelectedTabIndex=l.Index
 
 local newContent=l.UIElements.Content
-if j then
-newContent.Parent=am.UIElements.TabsContent
+local tabsContent=am.UIElements.TabsContent
+
+if j or not prevTab then
+-- Instant: no animation on first load or programmatic silent switch
+if prevTab and prevTab.UIElements.Content then
+prevTab.UIElements.Content.Parent=nil
+end
+newContent.Parent=tabsContent
 else
--- Start invisible, parent it, then fade in
-newContent.GroupTransparency=1
-newContent.Parent=am.UIElements.TabsContent
-task.defer(function()
-ae(newContent,0.15,{
-GroupTransparency=0,
+local oldContent=prevTab and prevTab.UIElements.Content
+local contentWidth=tabsContent.AbsoluteSize.X
+
+-- Slide old content out
+if oldContent and oldContent.Parent then
+ae(oldContent,0.22,{
+Position=UDim2.new(0,-slideDir*contentWidth,0,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+task.delay(0.22,function()
+if oldContent and oldContent.Parent then
+oldContent.Parent=nil
+oldContent.Position=UDim2.new(0,0,0,0)
+end
 end)
 end
-SetTabState(l,"Selected",j)
 
+-- Slide new content in from opposite side
+newContent.Position=UDim2.new(0,slideDir*contentWidth,0,0)
+newContent.Parent=tabsContent
+ae(newContent,0.22,{
+Position=UDim2.new(0,0,0,0),
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+SetTabState(l,"Selected",j)
 SyncHeight(j)
 return l
 end
