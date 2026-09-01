@@ -1583,7 +1583,7 @@ resizeConn:Disconnect()
 resizeConn=nil
 end
 local exitOffset=-((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y)or 800)-100
-e(u,0.35,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+e(u,0.35,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
 e(r,0.35,{Position=UDim2.new(0,0,0,exitOffset)},Enum.EasingStyle.Quint,Enum.EasingDirection.In):Play()
 task.wait(.35)
 u:Destroy()
@@ -1594,13 +1594,25 @@ task.spawn(function()
 task.wait()
 b.PlayNotificationSound(h.Sound)
 
--- AutomaticSize can take a couple of layout passes to settle
--- (nested UIListLayout/UIPadding/TextLabel autosizing), so reading
--- r.AbsoluteSize.Y too early produces a stale/undersized value and
--- the container "u" ends up with a mismatched gap.
+-- AutomaticSize can take several layout passes to settle, especially
+-- when the description wraps to more than one line (nested
+-- UIListLayout/UIPadding/TextLabel autosizing all need to resolve).
+-- Reading r.AbsoluteSize.Y too early/on a fixed frame count produces a
+-- stale/undersized value, so instead wait until the height stops
+-- changing between frames (with a hard cap so this can never hang).
 local RunService=game:GetService"RunService"
-for waitIndex=1,3 do
+local previousHeight=-1
+local stableFrames=0
+local safetyFrames=0
+while stableFrames<2 and safetyFrames<30 do
 RunService.Heartbeat:Wait()
+safetyFrames=safetyFrames+1
+if r.AbsoluteSize.Y==previousHeight then
+stableFrames=stableFrames+1
+else
+stableFrames=0
+previousHeight=r.AbsoluteSize.Y
+end
 end
 
 e(u,0.45,{Size=UDim2.new(
