@@ -5622,23 +5622,6 @@ local am=ac("UIScale",{
 Scale=1,
 })
 
-local Glow=ac("ImageLabel",{
-Size=UDim2.new(1,60,1,60),
-Position=UDim2.new(0.5,0,0.5,0),
-AnchorPoint=Vector2.new(0.5,0.5),
-BackgroundTransparency=1,
-Image="rbxassetid://5028857084",
-ImageColor3=Color3.fromHex"40c9ff",
-ImageTransparency=0.4,
-ScaleType=Enum.ScaleType.Slice,
-SliceCenter=Rect.new(24,24,276,276),
-ZIndex=98,
-},{
-ac("UIGradient",{
-Color=ColorSequence.new(Color3.fromHex"40c9ff",Color3.fromHex"e81cff")
-})
-})
-
 local an=ac("Frame",{
 Size=UDim2.new(0,0,0,44),
 AutomaticSize="X",
@@ -5649,7 +5632,6 @@ ZIndex=99,
 BackgroundColor3=Color3.new(0,0,0),
 },{
 am,
-Glow,
 ac("UICorner",{
 CornerRadius=UDim.new(1,0)
 }),
@@ -5770,10 +5752,6 @@ StrokeThickness=aq.StrokeThickness or 2,
 Scale=aq.Scale or 1,
 Color=aq.Color
 or ColorSequence.new(Color3.fromHex"40c9ff",Color3.fromHex"e81cff"),
-AuraColor=aq.AuraColor or aq.Color
-or ColorSequence.new(Color3.fromHex"40c9ff",Color3.fromHex"e81cff"),
-AuraTransparency=aq.AuraTransparency or 0.4,
-AuraEnabled=aq.AuraEnabled~=false,
 }
 
 
@@ -5830,14 +5808,9 @@ ag:SetIcon(ar.Icon)
 end
 
 an.UIStroke.UIGradient.Color=ar.Color
-Glow.Visible=ar.AuraEnabled
-Glow.ImageTransparency=ar.AuraTransparency
-if Glow:FindFirstChildOfClass"UIGradient"then
-Glow.UIGradient.Color=ar.AuraColor
-else
-Glow.ImageColor3=typeof(ar.AuraColor)=="Color3"
-and ar.AuraColor
-or Color3.fromHex"40c9ff"
+local as=an:FindFirstChild"Glow"
+if as and as:FindFirstChild"UIGradient"then
+as.UIGradient.Color=ar.Color
 end
 
 an.UICorner.CornerRadius=ar.CornerRadius
