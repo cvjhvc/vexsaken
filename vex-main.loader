@@ -7,7 +7,8 @@ local a = {
     [18687417158] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/main/vexsaken6.7",
     [92637789841354] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/collectalltheleaves",
     [78515283254292] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Animal%20Hospital%20Vexsaken",
-    [116497287371701] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Karinderya%20Vexsaken"
+    [116497287371701] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Karinderya%20Vexsaken",
+    [99567941238278] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Ink%20Game%20Nauru"
 }
 
 local b = {
@@ -17,13 +18,14 @@ local b = {
     [6331902150] = a[18687417158],
     [10539411000] = a[92637789841354],
     [10148749921] = a[78515283254292],
-    [10648820673] = a[116497287371701]
+    [10648820673] = a[116497287371701],
+    [7008097940] = a[99567941238278]
 }
 
 local c = a[game.PlaceId] or b[game.GameId]
 
 if not c then
-    p:Kick("This game is not supported by Vex")
+    p:Kick("This game is not supported by Nauru Hub")
     return
 end
 
