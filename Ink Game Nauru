@@ -1,1 +1,2 @@
-loadstring(game:HttpGet("https://flowauth.net/v1/loaders/c46e7c608c4c6d3385e9f5fb137d94a9.lua"))()
+getgenv().SCRIPT_KEY = "KEYLESS"
+loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/589113bc2c849cc12bdc199f71f470c27a25e909d499db35864c442e6e8bba0d/download"))()
