@@ -1,4 +1,3 @@
-
 local p = game:GetService("Players").LocalPlayer
 
 local a = {
@@ -10,7 +9,8 @@ local a = {
     [78515283254292] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Animal%20Hospital%20Vexsaken",
     [116497287371701] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Karinderya%20Vexsaken",
     [99567941238278] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Ink%20Game%20Nauru",
-    [116495829188952] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Dead%20Rails%20Nauru"
+    [116495829188952] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Dead%20Rails%20Nauru",
+    [107535308163741] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/huss%20valley"
 }
 
 local b = {
@@ -22,7 +22,8 @@ local b = {
     [10148749921] = a[78515283254292],
     [10648820673] = a[116497287371701],
     [7008097940] = a[99567941238278],
-    [7018190066] = a[116495829188952]
+    [7018190066] = a[116495829188952],
+    [107535308163741] = a[107535308163741]
 }
 
 local c = a[game.PlaceId] or b[game.GameId]
