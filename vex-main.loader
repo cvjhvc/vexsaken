@@ -11,7 +11,7 @@ local a = {
     [99567941238278] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Ink%20Game%20Nauru",
     [116495829188952] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Dead%20Rails%20Nauru",
     [107535308163741] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/huss%20valley",
-    [10771421858] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/dont%20splash%20nauru",
+    [119958473240233] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/dont%20splash%20nauru",
 }
 
 local b = {
@@ -25,7 +25,7 @@ local b = {
     [7008097940] = a[99567941238278],
     [7018190066] = a[116495829188952],
     [107535308163741] = a[107535308163741],
-    [139386728420706] = a[10771421858],
+    [10771421858] = a[119958473240233],
 }
 
 local c = a[game.PlaceId] or b[game.GameId]
