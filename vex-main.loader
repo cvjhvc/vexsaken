@@ -12,6 +12,7 @@ local a = {
     [116495829188952] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/Dead%20Rails%20Nauru",
     [107535308163741] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/huss%20valley",
     [119958473240233] = "https://raw.githubusercontent.com/cvjhvc/vexsaken/refs/heads/main/dont%20splash%20nauru",
+    [117713779364528] = "https://flowauth.net/v1/loaders/0e142705e56d0d3a72d2127c5951d5d8.lua",
 }
 
 local b = {
@@ -26,6 +27,7 @@ local b = {
     [7018190066] = a[116495829188952],
     [107535308163741] = a[107535308163741],
     [10771421858] = a[119958473240233],
+    [15318113891] = a[117713779364528],
 }
 
 local c = a[game.PlaceId] or b[game.GameId]
